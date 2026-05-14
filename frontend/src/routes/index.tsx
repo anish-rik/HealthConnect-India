@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ThemeToggle } from "../components/theme-toggle";
 import { VoiceButton } from "../components/voice-button";
@@ -150,6 +150,7 @@ function HomePage() {
   const [lang, setLang] = useState<LangCode>("en");
   const [menuOpen, setMenuOpen] = useState(false);
   const { isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
   const t = useT(lang);
 
   useEffect(() => {
@@ -315,13 +316,13 @@ function HomePage() {
               <p className="mt-5 max-w-xl text-lg text-body">{t.hero.subtitle}</p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <a
-                  href="#trust"
+                <button
+                  onClick={() => navigate({ to: "/abha-link" })}
                   className="inline-flex items-center justify-center rounded-full bg-accent px-6 py-3.5 text-base font-semibold text-accent-foreground shadow-sm transition-all hover:scale-[1.02] hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
                   aria-describedby="cta-description"
                 >
                   {t.hero.ctaPrimary}
-                </a>
+                </button>
                 <a
                   href="#how"
                   className="inline-flex items-center justify-center rounded-full border-2 border-primary bg-transparent px-6 py-3.5 text-base font-semibold text-primary transition-all hover:bg-primary hover:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"

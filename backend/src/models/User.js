@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+﻿const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
@@ -30,6 +30,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       unique: true,
       sparse: true, // Allow null values
+    },
+    abhaConsentId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    abhaConsentStatus: {
+      type: String,
+      enum: ['PENDING', 'APPROVED', 'REJECTED', 'EXPIRED', 'REVOKED', 'UNKNOWN'],
+      default: 'UNKNOWN',
     },
     dateOfBirth: Date,
     gender: {

@@ -11,6 +11,7 @@ const connectDB = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
 const recordsRoutes = require('./routes/recordsRoutes');
 const appointmentsRoutes = require('./routes/appointmentsRoutes');
+const abhaRoutes = require('./routes/abhaRoutes');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -43,6 +44,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/records', recordsRoutes);
 app.use('/api/appointments', appointmentsRoutes);
+app.use('/api/abha', abhaRoutes);
 
 // WebSocket connections
 io.on('connection', (socket) => {

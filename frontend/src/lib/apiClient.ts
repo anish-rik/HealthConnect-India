@@ -116,16 +116,24 @@ class ApiClient {
 
   // ABHA endpoints
   abha = {
-    link: (abhaId) =>
-      this.request('/abha/link', {
-        method: 'POST',
-        body: JSON.stringify({ abhaId }),
-      }),
-    verify: (otp) =>
+    verify: (abhaNumber) =>
       this.request('/abha/verify', {
         method: 'POST',
-        body: JSON.stringify({ otp }),
+        body: JSON.stringify({ abhaNumber }),
       }),
+    link: (abhaNumber) =>
+      this.request('/abha/link', {
+        method: 'POST',
+        body: JSON.stringify({ abhaNumber }),
+      }),
+    status: () =>
+      this.request('/abha/status', { method: 'GET' }),
+    createConsentRequest: () =>
+      this.request('/abha/consent-request', { method: 'POST' }),
+    getConsentStatus: () =>
+      this.request('/abha/consent-status', { method: 'GET' }),
+    getHealthRecords: () =>
+      this.request('/abha/health-records', { method: 'GET' }),
   };
 }
 

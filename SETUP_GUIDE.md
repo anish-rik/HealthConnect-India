@@ -1,4 +1,4 @@
-# Quick Setup Guide for Gourav 👋
+# Quick Setup Guide for Team 👋
 
 Welcome to the HealthConnect India project! Here's how to get started quickly.
 
@@ -36,7 +36,10 @@ npm install
 
 ```bash
 # Go back to root
-cd ../HealthConnect-India
+cd ../
+
+# Move into frontend folder
+cd frontend
 
 # Install frontend dependencies
 npm install
@@ -55,7 +58,7 @@ npm run dev
 
 ### Terminal 2 - Frontend
 ```bash
-cd HealthConnect-India
+cd frontend
 npm run dev
 # Should show: ➜ Local: http://localhost:5173/
 ```
@@ -72,14 +75,14 @@ npm run dev
 Once everything is running:
 
 1. **Explore the codebase:**
-   - Frontend pages in `HealthConnect-India/src/routes/`
+   - Frontend pages in `frontend/src/routes/`
    - Backend API in `backend/src/routes/`
-   - UI components in `HealthConnect-India/src/components/`
+   - UI components in `frontend/src/components/`
 
 2. **Understand the architecture:**
    - Frontend sends requests to Backend API
    - Backend stores data in MongoDB
-   - API client is at `HealthConnect-India/src/lib/apiClient.ts`
+   - API client is at `frontend/src/lib/apiClient.ts`
 
 3. **Features to work on:**
    - Login/Register pages (frontend pages exist, need API integration)

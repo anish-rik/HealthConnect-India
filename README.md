@@ -90,7 +90,7 @@ npm run dev
 ### 3. Setup Frontend
 
 ```bash
-cd HealthConnect-India
+cd frontend
 
 # Install dependencies
 npm install

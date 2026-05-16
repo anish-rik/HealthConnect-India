@@ -9,6 +9,7 @@ const {
 } = require('../controllers/recordsController');
 const { authenticateToken } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { validateCreateRecord, validateMongoId } = require('../middleware/validators');
 
 const router = express.Router();
 
@@ -17,14 +18,14 @@ router.use(authenticateToken);
 
 // List and create
 router.get('/', listRecords);
-router.post('/', upload.array('attachments', 5), createRecord);
+router.post('/', upload.array('attachments', 5), validateCreateRecord, createRecord);
 
 // Get, update, delete
-router.get('/:id', getRecord);
-router.put('/:id', updateRecord);
-router.delete('/:id', deleteRecord);
+router.get('/:id', validateMongoId, getRecord);
+router.put('/:id', validateMongoId, updateRecord);
+router.delete('/:id', validateMongoId, deleteRecord);
 
 // Share record
-router.post('/:id/share', shareRecord);
+router.post('/:id/share', validateMongoId, shareRecord);
 
 module.exports = router;

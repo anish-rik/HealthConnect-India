@@ -8,6 +8,7 @@ const {
   completeAppointment,
 } = require('../controllers/appointmentsController');
 const { authenticateToken } = require('../middleware/auth');
+const { validateCreateAppointment, validateMongoId } = require('../middleware/validators');
 
 const router = express.Router();
 
@@ -16,14 +17,14 @@ router.use(authenticateToken);
 
 // List and create
 router.get('/', listAppointments);
-router.post('/', createAppointment);
+router.post('/', validateCreateAppointment, createAppointment);
 
 // Get and update
-router.get('/:id', getAppointment);
-router.put('/:id', updateAppointment);
+router.get('/:id', validateMongoId, getAppointment);
+router.put('/:id', validateMongoId, updateAppointment);
 
 // Cancel and complete
-router.post('/:id/cancel', cancelAppointment);
-router.post('/:id/complete', completeAppointment);
+router.post('/:id/cancel', validateMongoId, cancelAppointment);
+router.post('/:id/complete', validateMongoId, completeAppointment);
 
 module.exports = router;

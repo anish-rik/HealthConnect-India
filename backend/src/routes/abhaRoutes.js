@@ -1,20 +1,17 @@
-﻿const express = require('express');
+const express = require('express');
 const { authenticateToken } = require('../middleware/auth');
 const abdmService = require('../services/abdmService');
 const User = require('../models/User');
 const { sendSuccessResponse, sendErrorResponse } = require('../utils/helpers');
+const { validateAbhaNumber } = require('../middleware/validators');
 
 const router = express.Router();
 
 router.use(authenticateToken);
 
-router.post('/verify', async (req, res) => {
+router.post('/verify', validateAbhaNumber, async (req, res) => {
   try {
     const { abhaNumber } = req.body;
-
-    if (!abhaNumber) {
-      return sendErrorResponse(res, 400, 'ABHA number is required');
-    }
 
     const result = await abdmService.verifyABHA(abhaNumber);
 
@@ -29,14 +26,10 @@ router.post('/verify', async (req, res) => {
   }
 });
 
-router.post('/link', async (req, res) => {
+router.post('/link', validateAbhaNumber, async (req, res) => {
   try {
     const { abhaNumber } = req.body;
     const userId = req.user.id;
-
-    if (!abhaNumber) {
-      return sendErrorResponse(res, 400, 'ABHA number is required');
-    }
 
     const verification = await abdmService.verifyABHA(abhaNumber);
     if (!verification.exists) {

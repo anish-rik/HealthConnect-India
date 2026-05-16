@@ -8,6 +8,9 @@ const http = require('http');
 const socketIO = require('socket.io');
 const path = require('path');
 const fs = require('fs');
+const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const mongoose = require('mongoose');
 
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
@@ -25,17 +28,31 @@ const io = socketIO(server, {
   },
 });
 
-// Middleware
+// ── Security & Middleware ────────────────────────────────────────────────────
+
 app.use(helmet()); // Security headers
-app.use(compression()); // Compression
-app.use(morgan('combined')); // Logging
+app.use(compression()); // Gzip compression
+app.use(morgan('combined')); // Request logging
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
 }));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Global rate limiter — 200 requests per minute per IP
+app.use(rateLimit({
+  windowMs: 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+}));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Prevent NoSQL injection attacks
+app.use(mongoSanitize());
+
+// ── Static uploads directory ─────────────────────────────────────────────────
 
 const uploadsPath = path.join(__dirname, '..', 'uploads');
 if (!fs.existsSync(uploadsPath)) {
@@ -43,18 +60,39 @@ if (!fs.existsSync(uploadsPath)) {
 }
 app.use('/uploads', express.static(uploadsPath));
 
-// Health check endpoint
+// ── Health check (reports DB + ABDM config status) ───────────────────────────
+
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'Server is running' });
+  const dbState = mongoose.connection.readyState;
+  const dbStatus = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting',
+  };
+
+  const abdmConfigured = !!(process.env.ABHA_CLIENT_ID && process.env.ABHA_CLIENT_SECRET);
+
+  res.status(dbState === 1 ? 200 : 503).json({
+    status: dbState === 1 ? 'healthy' : 'degraded',
+    timestamp: new Date().toISOString(),
+    services: {
+      database: dbStatus[dbState] || 'unknown',
+      abdm: abdmConfigured ? 'configured' : 'mock-mode',
+    },
+    version: process.env.npm_package_version || '1.0.0',
+  });
 });
 
-// API Routes
+// ── API Routes ───────────────────────────────────────────────────────────────
+
 app.use('/api/auth', authRoutes);
 app.use('/api/records', recordsRoutes);
 app.use('/api/appointments', appointmentsRoutes);
 app.use('/api/abha', abhaRoutes);
 
-// WebSocket connections
+// ── WebSocket ────────────────────────────────────────────────────────────────
+
 io.on('connection', (socket) => {
   console.log('New client connected:', socket.id);
 
@@ -75,11 +113,13 @@ io.on('connection', (socket) => {
   });
 });
 
-// Error handling
+// ── Error handling ───────────────────────────────────────────────────────────
+
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-// Connect to database and start server
+// ── Start server ─────────────────────────────────────────────────────────────
+
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
@@ -89,6 +129,7 @@ const startServer = async () => {
     server.listen(PORT, () => {
       console.log(`\n✓ Server running on http://localhost:${PORT}`);
       console.log(`✓ WebSocket running on ws://localhost:${PORT}`);
+      console.log(`✓ Health check: http://localhost:${PORT}/health`);
       console.log('✓ Press Ctrl+C to stop\n');
     });
   } catch (error) {

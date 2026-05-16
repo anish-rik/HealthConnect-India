@@ -7,9 +7,8 @@ const connectDB = async () => {
     
     console.log('Attempting to connect to MongoDB...');
     
+    // Mongoose 7+ no longer requires useNewUrlParser / useUnifiedTopology
     await mongoose.connect(mongoURI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
@@ -25,4 +24,3 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
-

@@ -45,6 +45,37 @@ class ApiClient {
     }
   }
 
+  /**
+   * Send a multipart/form-data request (for file uploads).
+   * Do NOT set Content-Type — the browser sets it with the boundary.
+   */
+  async requestMultipart(endpoint, formData, method = 'POST') {
+    const url = `${this.baseURL}${endpoint}`;
+    const headers: Record<string, string> = {};
+
+    if (this.token) {
+      headers.Authorization = `Bearer ${this.token}`;
+    }
+
+    try {
+      const response = await fetch(url, {
+        method,
+        headers,
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'API request failed');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('API Upload Error:', error);
+      throw error;
+    }
+  }
+
   // Auth endpoints
   auth = {
     register: (data) =>
@@ -70,11 +101,36 @@ class ApiClient {
   records = {
     list: () =>
       this.request('/records', { method: 'GET' }),
-    create: (data) =>
-      this.request('/records', {
+
+    /**
+     * Create a record with optional file attachments.
+     * @param data  Record fields (recordType, title, description, etc.)
+     * @param files Optional array of File objects to attach.
+     */
+    create: (data, files?: File[]) => {
+      if (files && files.length > 0) {
+        const formData = new FormData();
+        // Append JSON fields
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== undefined && value !== null) {
+            formData.append(
+              key,
+              typeof value === 'object' ? JSON.stringify(value) : String(value)
+            );
+          }
+        });
+        // Append file attachments
+        files.forEach((file) => formData.append('attachments', file));
+        return this.requestMultipart('/records', formData);
+      }
+
+      // No files — send as JSON
+      return this.request('/records', {
         method: 'POST',
         body: JSON.stringify(data),
-      }),
+      });
+    },
+
     get: (id) =>
       this.request(`/records/${id}`, { method: 'GET' }),
     update: (id, data) =>

@@ -12,7 +12,7 @@ services:
       - key: PORT
         value: 10000
       - key: FRONTEND_URL
-        sync: false # Set this in Render dashboard (e.g., https://your-vercel-app.vercel.app)
+        sync: false # Set this in Render dashboard (your Vercel URL)
       - key: MONGODB_URI
         sync: false # Set this in Render dashboard
       - key: DB_NAME
@@ -28,7 +28,9 @@ services:
       - key: ABHA_CLIENT_SECRET
         sync: false
       - key: ABDM_BASE_URL
-        value: https://api.abdm.gov.in/v1
+        value: https://dev.abdm.gov.in/api/hiecm/gateway/v3
+      - key: ABDM_CM_ID
+        value: sbx
       - key: ABDM_USE_MOCK
         value: "true"
       - key: SMTP_HOST

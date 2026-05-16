@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: healthconnect-backend
+    env: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: FRONTEND_URL
+        sync: false # Set this in Render dashboard (e.g., https://your-vercel-app.vercel.app)
+      - key: MONGODB_URI
+        sync: false # Set this in Render dashboard
+      - key: DB_NAME
+        value: healthconnect-india
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRY
+        value: 7d
+      - key: LOG_LEVEL
+        value: info
+      - key: ABHA_CLIENT_ID
+        sync: false
+      - key: ABHA_CLIENT_SECRET
+        sync: false
+      - key: ABDM_BASE_URL
+        value: https://api.abdm.gov.in/v1
+      - key: ABDM_USE_MOCK
+        value: "true"
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false

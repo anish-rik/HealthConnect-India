@@ -8,6 +8,7 @@ const {
   shareRecord,
 } = require('../controllers/recordsController');
 const { authenticateToken } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.use(authenticateToken);
 
 // List and create
 router.get('/', listRecords);
-router.post('/', createRecord);
+router.post('/', upload.array('attachments', 5), createRecord);
 
 // Get, update, delete
 router.get('/:id', getRecord);

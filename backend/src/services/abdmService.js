@@ -5,7 +5,7 @@ class ABDMService {
     this.baseURL = process.env.ABDM_BASE_URL || 'https://api.abdm.gov.in/v1';
     this.clientId = process.env.ABHA_CLIENT_ID;
     this.clientSecret = process.env.ABHA_CLIENT_SECRET;
-    this.useMock = process.env.ABDM_USE_MOCK === 'true';
+    this.useMock = process.env.ABDM_USE_MOCK === 'true' || !this.clientId || !this.clientSecret;
     this.accessToken = null;
     this.tokenExpiry = null;
   }
@@ -138,7 +138,7 @@ class ABDMService {
 
   async getConsentStatus(consentId) {
     if (!this.isConfigured()) {
-      throw new Error('ABDM credentials are not configured');
+      return this.mockGetConsentStatus(consentId);
     }
 
     try {
@@ -206,6 +206,17 @@ class ABDMService {
       patientId: abhaNumber,
       requesterId,
       createdAt: new Date().toISOString(),
+    };
+  }
+
+  async mockGetConsentStatus(consentId) {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    return {
+      consentId,
+      status: 'PENDING',
+      updatedAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     };
   }
 

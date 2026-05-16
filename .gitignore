@@ -40,3 +40,6 @@ Thumbs.db
 
 # Local development
 .nodemonignore
+
+# Uploaded health record files
+backend/uploads/

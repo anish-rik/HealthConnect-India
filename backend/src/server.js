@@ -6,6 +6,8 @@ const compression = require('compression');
 const morgan = require('morgan');
 const http = require('http');
 const socketIO = require('socket.io');
+const path = require('path');
+const fs = require('fs');
 
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/authRoutes');
@@ -34,6 +36,12 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const uploadsPath = path.join(__dirname, '..', 'uploads');
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsPath));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

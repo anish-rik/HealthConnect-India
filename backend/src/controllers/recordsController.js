@@ -22,6 +22,12 @@ const createRecord = async (req, res) => {
       return sendErrorResponse(res, 400, 'Record type and title are required');
     }
 
+    const attachments = (req.files || []).map((file) => ({
+      filename: file.filename,
+      url: `/uploads/${file.filename}`,
+      uploadedAt: new Date(),
+    }));
+
     const record = new HealthRecord({
       userId: req.user.id,
       recordType,
@@ -32,6 +38,7 @@ const createRecord = async (req, res) => {
       diagnosis,
       treatmentPlan,
       date: date || new Date(),
+      attachments,
     });
 
     await record.save();

@@ -10,14 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AbhaLinkRouteImport } from './routes/abha-link'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RecordsUploadRouteImport } from './routes/records/upload'
+import { Route as AppointmentsBookRouteImport } from './routes/appointments/book'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -40,20 +48,36 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RecordsUploadRoute = RecordsUploadRouteImport.update({
+  id: '/records/upload',
+  path: '/records/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppointmentsBookRoute = AppointmentsBookRouteImport.update({
+  id: '/appointments/book',
+  path: '/appointments/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/abha-link': typeof AbhaLinkRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/appointments/book': typeof AppointmentsBookRoute
+  '/records/upload': typeof RecordsUploadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/abha-link': typeof AbhaLinkRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/appointments/book': typeof AppointmentsBookRoute
+  '/records/upload': typeof RecordsUploadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,14 +85,42 @@ export interface FileRoutesById {
   '/abha-link': typeof AbhaLinkRoute
   '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
+  '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/appointments/book': typeof AppointmentsBookRoute
+  '/records/upload': typeof RecordsUploadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/abha-link' | '/dashboard' | '/login' | '/register'
+  fullPaths:
+    | '/'
+    | '/abha-link'
+    | '/dashboard'
+    | '/login'
+    | '/profile'
+    | '/register'
+    | '/appointments/book'
+    | '/records/upload'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/abha-link' | '/dashboard' | '/login' | '/register'
-  id: '__root__' | '/' | '/abha-link' | '/dashboard' | '/login' | '/register'
+  to:
+    | '/'
+    | '/abha-link'
+    | '/dashboard'
+    | '/login'
+    | '/profile'
+    | '/register'
+    | '/appointments/book'
+    | '/records/upload'
+  id:
+    | '__root__'
+    | '/'
+    | '/abha-link'
+    | '/dashboard'
+    | '/login'
+    | '/profile'
+    | '/register'
+    | '/appointments/book'
+    | '/records/upload'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,7 +128,10 @@ export interface RootRouteChildren {
   AbhaLinkRoute: typeof AbhaLinkRoute
   DashboardRoute: typeof DashboardRoute
   LoginRoute: typeof LoginRoute
+  ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
+  AppointmentsBookRoute: typeof AppointmentsBookRoute
+  RecordsUploadRoute: typeof RecordsUploadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -86,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -116,6 +178,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/records/upload': {
+      id: '/records/upload'
+      path: '/records/upload'
+      fullPath: '/records/upload'
+      preLoaderRoute: typeof RecordsUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/appointments/book': {
+      id: '/appointments/book'
+      path: '/appointments/book'
+      fullPath: '/appointments/book'
+      preLoaderRoute: typeof AppointmentsBookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -124,7 +200,10 @@ const rootRouteChildren: RootRouteChildren = {
   AbhaLinkRoute: AbhaLinkRoute,
   DashboardRoute: DashboardRoute,
   LoginRoute: LoginRoute,
+  ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
+  AppointmentsBookRoute: AppointmentsBookRoute,
+  RecordsUploadRoute: RecordsUploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

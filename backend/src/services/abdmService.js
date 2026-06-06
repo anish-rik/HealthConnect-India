@@ -271,17 +271,19 @@ class ABDMService {
       '12345678901234',
       '98765432109876',
       '11111111111111',
+      '91782560349180', // Demo account ABHA
     ];
     const exists = mockValidABHA.includes(abhaNumber);
 
     if (exists) {
+      const isDemoUser = abhaNumber === '91782560349180';
       return {
         exists: true,
         user: {
           id: abhaNumber,
-          name: 'Mock Patient',
-          gender: 'M',
-          dateOfBirth: '1990-01-01',
+          name: isDemoUser ? 'Rajesh Kumar' : 'Mock Patient',
+          gender: isDemoUser ? 'M' : 'M',
+          dateOfBirth: isDemoUser ? '1975-08-15' : '1990-01-01',
         },
       };
     }

@@ -54,14 +54,14 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { phone, password } = req.body;
 
-    if (!email || !password) {
-      return sendErrorResponse(res, 400, 'Email and password are required');
+    if (!phone || !password) {
+      return sendErrorResponse(res, 400, 'Phone number and password are required');
     }
 
-    // Find user by email
-    const user = await User.findOne({ email }).select('+password');
+    // Find user by phone
+    const user = await User.findOne({ phone }).select('+password');
     if (!user) {
       return sendErrorResponse(res, 401, 'Invalid credentials');
     }
@@ -124,4 +124,44 @@ const updateProfile = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getProfile, updateProfile };
+const loginAbha = async (req, res) => {
+  try {
+    const { abhaId, password } = req.body;
+
+    if (!abhaId || !password) {
+      return sendErrorResponse(res, 400, 'ABHA ID and password are required');
+    }
+
+    // Clean ABHA ID (remove hyphens)
+    const cleanAbhaId = abhaId.replace(/\D/g, '');
+
+    // Find user by ABHA ID
+    const user = await User.findOne({ abhaId: cleanAbhaId }).select('+password');
+    if (!user) {
+      return sendErrorResponse(res, 401, 'Invalid ABHA ID or password');
+    }
+
+    // Compare password
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return sendErrorResponse(res, 401, 'Invalid ABHA ID or password');
+    }
+
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+
+    // Generate token
+    const token = generateToken(user);
+
+    return sendSuccessResponse(res, 200, 'Login successful', {
+      user: { id: user._id, email: user.email, name: user.name, role: user.role, abhaId: user.abhaId },
+      token,
+    });
+  } catch (error) {
+    console.error('ABHA Login error:', error);
+    return sendErrorResponse(res, 500, 'Login failed');
+  }
+};
+
+module.exports = { register, login, loginAbha, getProfile, updateProfile };

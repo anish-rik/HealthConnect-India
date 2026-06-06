@@ -1,8 +1,8 @@
 const express = require('express');
 const rateLimit = require('express-rate-limit');
-const { register, login, getProfile, updateProfile } = require('../controllers/authController');
+const { register, login, loginAbha, getProfile, updateProfile } = require('../controllers/authController');
 const { authenticateToken } = require('../middleware/auth');
-const { validateRegister, validateLogin } = require('../middleware/validators');
+const { validateRegister, validateLogin, validateAbhaLogin } = require('../middleware/validators');
 
 const router = express.Router();
 
@@ -21,6 +21,7 @@ const authLimiter = rateLimit({
 // Public routes (rate-limited + validated)
 router.post('/register', authLimiter, validateRegister, register);
 router.post('/login', authLimiter, validateLogin, login);
+router.post('/login-abha', authLimiter, validateAbhaLogin, loginAbha);
 
 // Protected routes
 router.get('/profile', authenticateToken, getProfile);

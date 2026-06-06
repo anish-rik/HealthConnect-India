@@ -49,14 +49,25 @@ const validateRegister = [
 ];
 
 const validateLogin = [
-  body('email')
+  body('phone')
     .trim()
-    .isEmail()
-    .withMessage('Valid email is required')
-    .normalizeEmail(),
+    .notEmpty()
+    .withMessage('Phone number is required')
+    .matches(/^\d{10}$/)
+    .withMessage('Phone must be a 10-digit Indian number'),
   body('password').notEmpty().withMessage('Password is required'),
   handleValidationErrors,
 ];
+
+const validateAbhaLogin = [
+  body('abhaId')
+    .trim()
+    .notEmpty()
+    .withMessage('ABHA ID is required'),
+  body('password').notEmpty().withMessage('Password is required'),
+  handleValidationErrors,
+];
+
 
 // ── Records Validators ──────────────────────────────────────────────────────
 
@@ -138,6 +149,7 @@ module.exports = {
   handleValidationErrors,
   validateRegister,
   validateLogin,
+  validateAbhaLogin,
   validateCreateRecord,
   validateCreateAppointment,
   validateAbhaNumber,

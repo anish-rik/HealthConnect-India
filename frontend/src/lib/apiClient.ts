@@ -88,6 +88,11 @@ class ApiClient {
         method: 'POST',
         body: JSON.stringify(data),
       }),
+    loginAbha: (data) =>
+      this.request('/auth/login-abha', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
     getProfile: () =>
       this.request('/auth/profile', { method: 'GET' }),
     updateProfile: (data) =>

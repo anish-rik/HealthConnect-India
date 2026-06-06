@@ -16,9 +16,9 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   isLoading: boolean;
-  isAuthenticated: boolean;
   register: (data: any) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<void>;
+  loginAbha: (abhaId: string, password: string) => Promise<void>;
   logout: () => void;
   updateProfile: (data: any) => Promise<void>;
 }
@@ -62,8 +62,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(newUser);
   };
 
-  const login = async (email: string, password: string) => {
-    const res = await apiClient.auth.login({ email, password });
+  const login = async (phone: string, password: string) => {
+    const res = await apiClient.auth.login({ phone, password });
+    const { token: newToken, user: newUser } = res.data;
+    
+    apiClient.setToken(newToken);
+    setToken(newToken);
+    setUser(newUser);
+  };
+
+  const loginAbha = async (abhaId: string, password: string) => {
+    const res = await apiClient.auth.loginAbha({ abhaId, password });
     const { token: newToken, user: newUser } = res.data;
     
     apiClient.setToken(newToken);
@@ -92,6 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated: !!token,
         register,
         login,
+        loginAbha,
         logout,
         updateProfile,
       }}

@@ -10,12 +10,14 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth();
-  const [email, setEmail] = useState("");
+  const { login, loginAbha, isAuthenticated } = useAuth();
+  const [phone, setPhone] = useState("");
+  const [abhaId, setAbhaId] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loginMethod, setLoginMethod] = useState<"phone" | "abha">("phone");
 
   if (isAuthenticated) {
     navigate({ to: "/dashboard" });
@@ -27,7 +29,11 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      if (loginMethod === "phone") {
+        await login(phone, password);
+      } else {
+        await loginAbha(abhaId, password);
+      }
       navigate({ to: "/dashboard" });
     } catch (err: any) {
       setError(err.message || "Login failed");
@@ -55,22 +61,73 @@ function LoginPage() {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-                Email Address
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                required
-                className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                aria-label="Email address"
-              />
+            {/* Login Method Toggle */}
+            <div className="flex p-1 bg-muted rounded-lg mb-6">
+              <button
+                type="button"
+                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
+                  loginMethod === "phone"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                onClick={() => {
+                  setLoginMethod("phone");
+                  setError("");
+                }}
+              >
+                Phone Number
+              </button>
+              <button
+                type="button"
+                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
+                  loginMethod === "abha"
+                    ? "bg-background text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                onClick={() => {
+                  setLoginMethod("abha");
+                  setError("");
+                }}
+              >
+                ABHA ID
+              </button>
             </div>
+
+            {/* Phone or ABHA Input */}
+            {loginMethod === "phone" ? (
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-foreground mb-2">
+                  Phone Number
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                  placeholder="9876543210"
+                  maxLength={10}
+                  required={loginMethod === "phone"}
+                  className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  aria-label="Phone number"
+                />
+              </div>
+            ) : (
+              <div>
+                <label htmlFor="abha" className="block text-sm font-medium text-foreground mb-2">
+                  ABHA Number
+                </label>
+                <input
+                  id="abha"
+                  type="text"
+                  value={abhaId}
+                  onChange={(e) => setAbhaId(e.target.value)}
+                  placeholder="1234 5678 9012 34"
+                  required={loginMethod === "abha"}
+                  className="w-full px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-lg tracking-wider"
+                  aria-label="ABHA Number"
+                />
+              </div>
+            )}
 
             {/* Password */}
             <div>
@@ -127,13 +184,6 @@ function LoginPage() {
           >
             Create Account
           </a>
-
-          {/* Demo Info */}
-          <div className="mt-8 p-4 rounded-lg bg-trust/20 border border-primary/20">
-            <p className="text-sm text-muted-foreground">
-              <strong>Demo account:</strong> test@example.com / Test123
-            </p>
-          </div>
         </div>
       </div>
     </div>

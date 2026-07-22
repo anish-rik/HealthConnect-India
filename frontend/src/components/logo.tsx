@@ -26,7 +26,11 @@ const sizeMap = {
 
 export function Logo({ size = "md", className = "", forceDark = false }: LogoProps) {
   return (
-    <a href="#top" className={`inline-flex items-center ${className}`} aria-label="HealthConnect India home">
+    <a
+      href="#top"
+      className={`inline-flex items-center ${className}`}
+      aria-label="HealthConnect India home"
+    >
       {/* Light-mode logo: shown by default, hidden when dark class is present */}
       <img
         src="/images/logo-light.png"

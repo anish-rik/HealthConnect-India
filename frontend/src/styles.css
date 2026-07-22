@@ -5,8 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Noto Sans", "Noto Sans Devanagari", "Noto Sans Bengali", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Kannada", "Noto Sans Malayalam", system-ui, sans-serif;
-  --font-display: "Poppins", "Noto Sans Devanagari", "Noto Sans Bengali", "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Kannada", "Noto Sans Malayalam", system-ui, sans-serif;
+  --font-sans:
+    "Noto Sans", "Noto Sans Devanagari", "Noto Sans Bengali", "Noto Sans Tamil", "Noto Sans Telugu",
+    "Noto Sans Kannada", "Noto Sans Malayalam", system-ui, sans-serif;
+  --font-display:
+    "Poppins", "Noto Sans Devanagari", "Noto Sans Bengali", "Noto Sans Tamil", "Noto Sans Telugu",
+    "Noto Sans Kannada", "Noto Sans Malayalam", system-ui, sans-serif;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -29,25 +33,25 @@
 }
 
 :root {
-  --background: #FFF3E0;
-  --foreground: #2A1A0F;
-  --body: #503D2E;
-  --primary: #F58216;
-  --primary-foreground: #FFFFFF;
-  --accent: #0B6E6E;
-  --accent-foreground: #FFFFFF;
-  --success: #2E7D32;
-  --trust: #FFE4B5;
-  --persona: #FFF8ED;
-  --footer: #C2410C;
-  --border: #FED7AA;
-  --card: #FFF3E0;
-  --muted: #FFE4B5;
-  --muted-foreground: #9A3412;
+  --background: #fff3e0;
+  --foreground: #2a1a0f;
+  --body: #503d2e;
+  --primary: #f58216;
+  --primary-foreground: #ffffff;
+  --accent: #0b6e6e;
+  --accent-foreground: #ffffff;
+  --success: #2e7d32;
+  --trust: #ffe4b5;
+  --persona: #fff8ed;
+  --footer: #c2410c;
+  --border: #fed7aa;
+  --card: #fff3e0;
+  --muted: #ffe4b5;
+  --muted-foreground: #9a3412;
 }
 
 .dark {
-  --background: #0C2318;
+  --background: #0c2318;
   --foreground: #f8fafc;
   --body: #cbd5e1;
   --primary: #2dd4bf;
@@ -58,15 +62,19 @@
   --trust: #1e293b;
   --persona: #1e293b;
   --footer: #020617;
-  --border: #1B4532;
-  --card: #0C2318;
-  --muted: #1B4532;
+  --border: #1b4532;
+  --card: #0c2318;
+  --muted: #1b4532;
   --muted-foreground: #94a3b8;
 }
 
 @layer base {
-  html { scroll-behavior: smooth; }
-  * { border-color: var(--color-border); }
+  html {
+    scroll-behavior: smooth;
+  }
+  * {
+    border-color: var(--color-border);
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-body);
@@ -74,13 +82,18 @@
     -webkit-font-smoothing: antialiased;
     line-height: 1.6;
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     color: var(--color-foreground);
     line-height: 1.25;
   }
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       transition-duration: 0.01ms !important;
     }

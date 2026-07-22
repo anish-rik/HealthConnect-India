@@ -47,12 +47,35 @@ interface TimelineData {
   expiresAt: string;
 }
 
-const typeConfig: Record<string, { icon: typeof FileText; color: string; bg: string; label: string }> = {
+const typeConfig: Record<
+  string,
+  { icon: typeof FileText; color: string; bg: string; label: string }
+> = {
   prescription: { icon: Pill, color: "text-blue-600", bg: "bg-blue-100", label: "Prescription" },
-  lab_report: { icon: TestTube2, color: "text-purple-600", bg: "bg-purple-100", label: "Lab Report" },
-  visit_summary: { icon: Stethoscope, color: "text-emerald-600", bg: "bg-emerald-100", label: "Visit Summary" },
-  discharge_summary: { icon: Heart, color: "text-rose-600", bg: "bg-rose-100", label: "Discharge Summary" },
-  diagnostic_report: { icon: Activity, color: "text-amber-600", bg: "bg-amber-100", label: "Diagnostic Report" },
+  lab_report: {
+    icon: TestTube2,
+    color: "text-purple-600",
+    bg: "bg-purple-100",
+    label: "Lab Report",
+  },
+  visit_summary: {
+    icon: Stethoscope,
+    color: "text-emerald-600",
+    bg: "bg-emerald-100",
+    label: "Visit Summary",
+  },
+  discharge_summary: {
+    icon: Heart,
+    color: "text-rose-600",
+    bg: "bg-rose-100",
+    label: "Discharge Summary",
+  },
+  diagnostic_report: {
+    icon: Activity,
+    color: "text-amber-600",
+    bg: "bg-amber-100",
+    label: "Diagnostic Report",
+  },
 };
 
 function PublicTimelinePage() {
@@ -97,7 +120,8 @@ function PublicTimelinePage() {
           </div>
           <h1 className="text-xl font-bold text-slate-800 mb-2">Link Expired or Invalid</h1>
           <p className="text-slate-500">
-            {error || "This QR code link has expired or does not exist. Please ask the patient to generate a new one."}
+            {error ||
+              "This QR code link has expired or does not exist. Please ask the patient to generate a new one."}
           </p>
         </div>
       </div>
@@ -105,7 +129,10 @@ function PublicTimelinePage() {
   }
 
   const age = data.patient.dateOfBirth
-    ? Math.floor((Date.now() - new Date(data.patient.dateOfBirth).getTime()) / (365.25 * 24 * 60 * 60 * 1000))
+    ? Math.floor(
+        (Date.now() - new Date(data.patient.dateOfBirth).getTime()) /
+          (365.25 * 24 * 60 * 60 * 1000),
+      )
     : null;
 
   return (
@@ -193,7 +220,9 @@ function PublicTimelinePage() {
                       {/* Header */}
                       <div className="flex items-start justify-between gap-3 mb-3">
                         <div>
-                          <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${config.bg} ${config.color} mb-1.5`}>
+                          <span
+                            className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${config.bg} ${config.color} mb-1.5`}
+                          >
                             <Icon size={10} />
                             {config.label}
                           </span>
@@ -241,10 +270,15 @@ function PublicTimelinePage() {
                           </p>
                           <div className="space-y-1">
                             {entry.medicines.map((med, i) => (
-                              <div key={i} className="text-sm text-blue-600 flex items-baseline gap-2">
+                              <div
+                                key={i}
+                                className="text-sm text-blue-600 flex items-baseline gap-2"
+                              >
                                 <span className="font-medium">{med.name}</span>
                                 <span className="text-blue-400 text-xs">
-                                  {[med.dosage, med.frequency, med.duration].filter(Boolean).join(" · ")}
+                                  {[med.dosage, med.frequency, med.duration]
+                                    .filter(Boolean)
+                                    .join(" · ")}
                                 </span>
                               </div>
                             ))}
@@ -260,7 +294,10 @@ function PublicTimelinePage() {
                           </p>
                           <div className="space-y-1">
                             {entry.labTests.map((test, i) => (
-                              <div key={i} className="text-sm text-purple-600 flex items-baseline justify-between gap-2">
+                              <div
+                                key={i}
+                                className="text-sm text-purple-600 flex items-baseline justify-between gap-2"
+                              >
                                 <span className="font-medium">{test.testName}</span>
                                 <span className="text-purple-500 text-xs">
                                   {test.result}

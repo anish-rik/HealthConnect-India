@@ -13,13 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   ArrowLeft,
@@ -123,8 +117,7 @@ function UploadRecordPage() {
     });
   }, []);
 
-  const removeFile = (index: number) =>
-    setFiles((prev) => prev.filter((_, i) => i !== index));
+  const removeFile = (index: number) => setFiles((prev) => prev.filter((_, i) => i !== index));
 
   /* ── drag-and-drop ── */
   const handleDragOver = (e: React.DragEvent) => {
@@ -140,21 +133,15 @@ function UploadRecordPage() {
 
   /* ── medicines ── */
   const addMedicine = () => setMedicines((m) => [...m, { ...EMPTY_MEDICINE }]);
-  const removeMedicine = (i: number) =>
-    setMedicines((m) => m.filter((_, idx) => idx !== i));
+  const removeMedicine = (i: number) => setMedicines((m) => m.filter((_, idx) => idx !== i));
   const updateMedicine = (i: number, field: keyof Medicine, value: string) =>
-    setMedicines((m) =>
-      m.map((med, idx) => (idx === i ? { ...med, [field]: value } : med))
-    );
+    setMedicines((m) => m.map((med, idx) => (idx === i ? { ...med, [field]: value } : med)));
 
   /* ── lab tests ── */
   const addLabTest = () => setLabTests((t) => [...t, { ...EMPTY_LAB_TEST }]);
-  const removeLabTest = (i: number) =>
-    setLabTests((t) => t.filter((_, idx) => idx !== i));
+  const removeLabTest = (i: number) => setLabTests((t) => t.filter((_, idx) => idx !== i));
   const updateLabTest = (i: number, field: keyof LabTest, value: string) =>
-    setLabTests((t) =>
-      t.map((test, idx) => (idx === i ? { ...test, [field]: value } : test))
-    );
+    setLabTests((t) => t.map((test, idx) => (idx === i ? { ...test, [field]: value } : test)));
 
   /* ── submit ── */
   const handleSubmit = async (e: React.FormEvent) => {
@@ -191,12 +178,10 @@ function UploadRecordPage() {
       if (treatmentPlan.trim()) payload.treatmentPlan = treatmentPlan.trim();
 
       const validMedicines = medicines.filter((m) => m.name.trim());
-      if (validMedicines.length > 0)
-        payload.medicines = JSON.stringify(validMedicines);
+      if (validMedicines.length > 0) payload.medicines = JSON.stringify(validMedicines);
 
       const validLabTests = labTests.filter((t) => t.testName.trim());
-      if (validLabTests.length > 0)
-        payload.labTests = JSON.stringify(validLabTests);
+      if (validLabTests.length > 0) payload.labTests = JSON.stringify(validLabTests);
 
       await apiClient.records.create(payload, files.length > 0 ? files : undefined);
       setSuccess(true);
@@ -238,9 +223,7 @@ function UploadRecordPage() {
           <div className="flex items-center gap-3 ml-2">
             <AppIcon size={32} />
             <div>
-              <h1 className="text-xl font-bold text-primary">
-                Upload Health Record
-              </h1>
+              <h1 className="text-xl font-bold text-primary">Upload Health Record</h1>
               <p className="text-sm text-muted-foreground">
                 Add a new medical record to your profile
               </p>
@@ -276,9 +259,7 @@ function UploadRecordPage() {
                 <FileText className="h-5 w-5 text-primary" />
                 Record Details
               </CardTitle>
-              <CardDescription>
-                Enter the basic details about this health record.
-              </CardDescription>
+              <CardDescription>Enter the basic details about this health record.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-5 sm:grid-cols-2">
               {/* Record type */}
@@ -344,9 +325,7 @@ function UploadRecordPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Doctor Information</CardTitle>
-              <CardDescription>
-                Optionally record the treating doctor's details.
-              </CardDescription>
+              <CardDescription>Optionally record the treating doctor's details.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
@@ -375,9 +354,7 @@ function UploadRecordPage() {
           {/* ── Diagnosis & Treatment ── */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">
-                Diagnosis & Treatment
-              </CardTitle>
+              <CardTitle className="text-lg">Diagnosis & Treatment</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2 sm:col-span-1">
@@ -411,9 +388,7 @@ function UploadRecordPage() {
                   <Pill className="h-5 w-5 text-primary" />
                   Medicines
                 </CardTitle>
-                <CardDescription>
-                  List any medications prescribed.
-                </CardDescription>
+                <CardDescription>List any medications prescribed.</CardDescription>
               </div>
               <Button
                 type="button"
@@ -437,9 +412,7 @@ function UploadRecordPage() {
                       <Input
                         placeholder="Paracetamol"
                         value={med.name}
-                        onChange={(e) =>
-                          updateMedicine(i, "name", e.target.value)
-                        }
+                        onChange={(e) => updateMedicine(i, "name", e.target.value)}
                       />
                     </div>
                     <div className="space-y-1">
@@ -447,9 +420,7 @@ function UploadRecordPage() {
                       <Input
                         placeholder="500mg"
                         value={med.dosage}
-                        onChange={(e) =>
-                          updateMedicine(i, "dosage", e.target.value)
-                        }
+                        onChange={(e) => updateMedicine(i, "dosage", e.target.value)}
                       />
                     </div>
                     <div className="space-y-1">
@@ -457,9 +428,7 @@ function UploadRecordPage() {
                       <Input
                         placeholder="Twice daily"
                         value={med.frequency}
-                        onChange={(e) =>
-                          updateMedicine(i, "frequency", e.target.value)
-                        }
+                        onChange={(e) => updateMedicine(i, "frequency", e.target.value)}
                       />
                     </div>
                     <div className="flex items-end gap-2">
@@ -468,9 +437,7 @@ function UploadRecordPage() {
                         <Input
                           placeholder="7 days"
                           value={med.duration}
-                          onChange={(e) =>
-                            updateMedicine(i, "duration", e.target.value)
-                          }
+                          onChange={(e) => updateMedicine(i, "duration", e.target.value)}
                         />
                       </div>
                       <Button
@@ -498,9 +465,7 @@ function UploadRecordPage() {
                   <TestTubeDiagonal className="h-5 w-5 text-primary" />
                   Lab Tests
                 </CardTitle>
-                <CardDescription>
-                  Record any lab test results.
-                </CardDescription>
+                <CardDescription>Record any lab test results.</CardDescription>
               </div>
               <Button
                 type="button"
@@ -524,9 +489,7 @@ function UploadRecordPage() {
                       <Input
                         placeholder="Hemoglobin"
                         value={test.testName}
-                        onChange={(e) =>
-                          updateLabTest(i, "testName", e.target.value)
-                        }
+                        onChange={(e) => updateLabTest(i, "testName", e.target.value)}
                       />
                     </div>
                     <div className="space-y-1">
@@ -534,9 +497,7 @@ function UploadRecordPage() {
                       <Input
                         placeholder="14.2"
                         value={test.result}
-                        onChange={(e) =>
-                          updateLabTest(i, "result", e.target.value)
-                        }
+                        onChange={(e) => updateLabTest(i, "result", e.target.value)}
                       />
                     </div>
                     <div className="space-y-1">
@@ -544,9 +505,7 @@ function UploadRecordPage() {
                       <Input
                         placeholder="12-16"
                         value={test.normalRange}
-                        onChange={(e) =>
-                          updateLabTest(i, "normalRange", e.target.value)
-                        }
+                        onChange={(e) => updateLabTest(i, "normalRange", e.target.value)}
                       />
                     </div>
                     <div className="flex items-end gap-2">
@@ -555,9 +514,7 @@ function UploadRecordPage() {
                         <Input
                           placeholder="g/dL"
                           value={test.unit}
-                          onChange={(e) =>
-                            updateLabTest(i, "unit", e.target.value)
-                          }
+                          onChange={(e) => updateLabTest(i, "unit", e.target.value)}
                         />
                       </div>
                       <Button
@@ -604,9 +561,7 @@ function UploadRecordPage() {
                 <Upload
                   className={`h-8 w-8 mb-3 ${isDragging ? "text-primary" : "text-muted-foreground"}`}
                 />
-                <p className="font-medium text-foreground">
-                  Drag & drop files here
-                </p>
+                <p className="font-medium text-foreground">Drag & drop files here</p>
                 <p className="mt-1 text-sm text-muted-foreground">
                   or click to browse · PDF, JPG, PNG
                 </p>
@@ -634,9 +589,7 @@ function UploadRecordPage() {
                       <div className="flex items-center gap-3 min-w-0">
                         <FileText className="h-5 w-5 shrink-0 text-primary" />
                         <div className="min-w-0">
-                          <p className="truncate text-sm font-medium">
-                            {file.name}
-                          </p>
+                          <p className="truncate text-sm font-medium">{file.name}</p>
                           <p className="text-xs text-muted-foreground">
                             {(file.size / 1024).toFixed(1)} KB
                           </p>
@@ -659,11 +612,7 @@ function UploadRecordPage() {
 
           {/* ── Submit ── */}
           <div className="flex items-center justify-end gap-4 pb-8">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate({ to: "/dashboard" })}
-            >
+            <Button type="button" variant="outline" onClick={() => navigate({ to: "/dashboard" })}>
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting} className="min-w-[140px]">

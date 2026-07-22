@@ -12,13 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   ArrowLeft,
@@ -61,12 +55,7 @@ const GENDERS = [
 
 function ProfilePage() {
   const navigate = useNavigate();
-  const {
-    user,
-    isAuthenticated,
-    isLoading: authLoading,
-    updateProfile,
-  } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, updateProfile } = useAuth();
 
   /* ── form state ── */
   const [name, setName] = useState("");
@@ -103,9 +92,7 @@ function ProfilePage() {
         setEmail(profile.email || "");
         setPhoneNumber(profile.phone || "");
         setDateOfBirth(
-          profile.dateOfBirth
-            ? new Date(profile.dateOfBirth).toISOString().split("T")[0]
-            : ""
+          profile.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split("T")[0] : "",
         );
         setGender(profile.gender || "");
         setAddress(profile.address || "");
@@ -189,9 +176,7 @@ function ProfilePage() {
             <AppIcon size={32} />
             <div>
               <h1 className="text-xl font-bold text-primary">Edit Profile</h1>
-              <p className="text-sm text-muted-foreground">
-                Update your personal information
-              </p>
+              <p className="text-sm text-muted-foreground">Update your personal information</p>
             </div>
           </div>
         </div>
@@ -235,9 +220,7 @@ function ProfilePage() {
                   <User className="h-10 w-10 text-primary" />
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground text-lg">
-                    {name || "Your Name"}
-                  </p>
+                  <p className="font-semibold text-foreground text-lg">{name || "Your Name"}</p>
                   <p className="text-sm text-muted-foreground">{email}</p>
                   {user?.role && (
                     <span className="mt-1 inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary capitalize">
@@ -276,9 +259,7 @@ function ProfilePage() {
                     disabled
                     className="h-11 bg-muted/50 cursor-not-allowed"
                   />
-                  <p className="text-xs text-muted-foreground">
-                    Email cannot be changed.
-                  </p>
+                  <p className="text-xs text-muted-foreground">Email cannot be changed.</p>
                 </div>
 
                 {/* Phone */}
@@ -308,10 +289,7 @@ function ProfilePage() {
             <CardContent className="grid gap-5 sm:grid-cols-2">
               {/* Date of Birth */}
               <div className="space-y-2">
-                <Label
-                  htmlFor="dateOfBirth"
-                  className="flex items-center gap-1.5"
-                >
+                <Label htmlFor="dateOfBirth" className="flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
                   Date of Birth
                 </Label>
@@ -343,10 +321,7 @@ function ProfilePage() {
 
               {/* Address */}
               <div className="space-y-2 sm:col-span-2">
-                <Label
-                  htmlFor="address"
-                  className="flex items-center gap-1.5"
-                >
+                <Label htmlFor="address" className="flex items-center gap-1.5">
                   <MapPin className="h-3.5 w-3.5" />
                   Address
                 </Label>
@@ -390,18 +365,10 @@ function ProfilePage() {
 
           {/* ── Submit ── */}
           <div className="flex items-center justify-end gap-4 pb-8">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate({ to: "/dashboard" })}
-            >
+            <Button type="button" variant="outline" onClick={() => navigate({ to: "/dashboard" })}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={isSaving}
-              className="min-w-[140px]"
-            >
+            <Button type="submit" disabled={isSaving} className="min-w-[140px]">
               {isSaving ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

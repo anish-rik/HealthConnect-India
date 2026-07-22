@@ -9,7 +9,7 @@ const { sendErrorResponse, sendSuccessResponse } = require('../utils/helpers');
  */
 const generateShareToken = async (req, res) => {
   try {
-    const { expiryHours = 24, label } = req.body;
+    const { expiryHours = 24, label, recordId } = req.body;
 
     // Cap expiry to 7 days max
     const hours = Math.min(Math.max(Number(expiryHours) || 24, 1), 168);
@@ -19,6 +19,7 @@ const generateShareToken = async (req, res) => {
       userId: req.user.id,
       expiresAt,
       label: label || 'Medical History QR',
+      ...(recordId && { recordId }),
     });
 
     await shareToken.save();
@@ -127,8 +128,14 @@ const getPublicTimeline = async (req, res) => {
       return sendErrorResponse(res, 404, 'Patient not found');
     }
 
-    // Fetch all health records for this user, sorted chronologically
-    const records = await HealthRecord.find({ userId: shareToken.userId })
+    // Fetch health records
+    let recordsQuery = { userId: shareToken.userId };
+    if (shareToken.recordId) {
+      recordsQuery = { _id: shareToken.recordId, userId: shareToken.userId };
+    }
+
+    // Fetch records, sorted chronologically
+    const records = await HealthRecord.find(recordsQuery)
       .sort({ date: -1 })
       .lean();
 

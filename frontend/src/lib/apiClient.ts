@@ -1,25 +1,25 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 class ApiClient {
   constructor() {
     this.baseURL = API_BASE_URL;
-    this.token = localStorage.getItem('authToken');
+    this.token = localStorage.getItem("authToken");
   }
 
   setToken(token) {
     this.token = token;
-    localStorage.setItem('authToken', token);
+    localStorage.setItem("authToken", token);
   }
 
   removeToken() {
     this.token = null;
-    localStorage.removeItem('authToken');
+    localStorage.removeItem("authToken");
   }
 
   async request(endpoint, options = {}) {
     const url = `${this.baseURL}${endpoint}`;
     const headers = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       ...options.headers,
     };
 
@@ -35,12 +35,12 @@ class ApiClient {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'API request failed');
+        throw new Error(error.error || "API request failed");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('API Error:', error);
+      console.error("API Error:", error);
       throw error;
     }
   }
@@ -49,7 +49,7 @@ class ApiClient {
    * Send a multipart/form-data request (for file uploads).
    * Do NOT set Content-Type — the browser sets it with the boundary.
    */
-  async requestMultipart(endpoint, formData, method = 'POST') {
+  async requestMultipart(endpoint, formData, method = "POST") {
     const url = `${this.baseURL}${endpoint}`;
     const headers: Record<string, string> = {};
 
@@ -66,12 +66,12 @@ class ApiClient {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'API request failed');
+        throw new Error(error.error || "API request failed");
       }
 
       return await response.json();
     } catch (error) {
-      console.error('API Upload Error:', error);
+      console.error("API Upload Error:", error);
       throw error;
     }
   }
@@ -79,33 +79,31 @@ class ApiClient {
   // Auth endpoints
   auth = {
     register: (data) =>
-      this.request('/auth/register', {
-        method: 'POST',
+      this.request("/auth/register", {
+        method: "POST",
         body: JSON.stringify(data),
       }),
     login: (data) =>
-      this.request('/auth/login', {
-        method: 'POST',
+      this.request("/auth/login", {
+        method: "POST",
         body: JSON.stringify(data),
       }),
     loginAbha: (data) =>
-      this.request('/auth/login-abha', {
-        method: 'POST',
+      this.request("/auth/login-abha", {
+        method: "POST",
         body: JSON.stringify(data),
       }),
-    getProfile: () =>
-      this.request('/auth/profile', { method: 'GET' }),
+    getProfile: () => this.request("/auth/profile", { method: "GET" }),
     updateProfile: (data) =>
-      this.request('/auth/profile', {
-        method: 'PUT',
+      this.request("/auth/profile", {
+        method: "PUT",
         body: JSON.stringify(data),
       }),
   };
 
   // Health records endpoints
   records = {
-    list: () =>
-      this.request('/records', { method: 'GET' }),
+    list: () => this.request("/records", { method: "GET" }),
 
     /**
      * Create a record with optional file attachments.
@@ -118,59 +116,52 @@ class ApiClient {
         // Append JSON fields
         Object.entries(data).forEach(([key, value]) => {
           if (value !== undefined && value !== null) {
-            formData.append(
-              key,
-              typeof value === 'object' ? JSON.stringify(value) : String(value)
-            );
+            formData.append(key, typeof value === "object" ? JSON.stringify(value) : String(value));
           }
         });
         // Append file attachments
-        files.forEach((file) => formData.append('attachments', file));
-        return this.requestMultipart('/records', formData);
+        files.forEach((file) => formData.append("attachments", file));
+        return this.requestMultipart("/records", formData);
       }
 
       // No files — send as JSON
-      return this.request('/records', {
-        method: 'POST',
+      return this.request("/records", {
+        method: "POST",
         body: JSON.stringify(data),
       });
     },
 
-    get: (id) =>
-      this.request(`/records/${id}`, { method: 'GET' }),
+    get: (id) => this.request(`/records/${id}`, { method: "GET" }),
     update: (id, data) =>
       this.request(`/records/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(data),
       }),
-    delete: (id) =>
-      this.request(`/records/${id}`, { method: 'DELETE' }),
+    delete: (id) => this.request(`/records/${id}`, { method: "DELETE" }),
     share: (id, userId) =>
       this.request(`/records/${id}/share`, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({ userId }),
       }),
   };
 
   // Appointments endpoints
   appointments = {
-    list: () =>
-      this.request('/appointments', { method: 'GET' }),
+    list: () => this.request("/appointments", { method: "GET" }),
     create: (data) =>
-      this.request('/appointments', {
-        method: 'POST',
+      this.request("/appointments", {
+        method: "POST",
         body: JSON.stringify(data),
       }),
-    get: (id) =>
-      this.request(`/appointments/${id}`, { method: 'GET' }),
+    get: (id) => this.request(`/appointments/${id}`, { method: "GET" }),
     update: (id, data) =>
       this.request(`/appointments/${id}`, {
-        method: 'PUT',
+        method: "PUT",
         body: JSON.stringify(data),
       }),
     cancel: (id, reason) =>
       this.request(`/appointments/${id}/cancel`, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify({ reason }),
       }),
   };
@@ -178,38 +169,31 @@ class ApiClient {
   // ABHA endpoints
   abha = {
     verify: (abhaNumber) =>
-      this.request('/abha/verify', {
-        method: 'POST',
+      this.request("/abha/verify", {
+        method: "POST",
         body: JSON.stringify({ abhaNumber }),
       }),
     link: (abhaNumber) =>
-      this.request('/abha/link', {
-        method: 'POST',
+      this.request("/abha/link", {
+        method: "POST",
         body: JSON.stringify({ abhaNumber }),
       }),
-    status: () =>
-      this.request('/abha/status', { method: 'GET' }),
-    createConsentRequest: () =>
-      this.request('/abha/consent-request', { method: 'POST' }),
-    getConsentStatus: () =>
-      this.request('/abha/consent-status', { method: 'GET' }),
-    getHealthRecords: () =>
-      this.request('/abha/health-records', { method: 'GET' }),
+    status: () => this.request("/abha/status", { method: "GET" }),
+    createConsentRequest: () => this.request("/abha/consent-request", { method: "POST" }),
+    getConsentStatus: () => this.request("/abha/consent-status", { method: "GET" }),
+    getHealthRecords: () => this.request("/abha/health-records", { method: "GET" }),
   };
 
   // Share / QR endpoints
   share = {
-    generate: (data: { expiryHours?: number; label?: string } = {}) =>
-      this.request('/share/generate', {
-        method: 'POST',
+    generate: (data: { expiryHours?: number; label?: string; recordId?: string } = {}) =>
+      this.request("/share/generate", {
+        method: "POST",
         body: JSON.stringify(data),
       }),
-    listTokens: () =>
-      this.request('/share/my-tokens', { method: 'GET' }),
-    revoke: (tokenId: string) =>
-      this.request(`/share/${tokenId}`, { method: 'DELETE' }),
-    getPublicTimeline: (token: string) =>
-      this.request(`/share/public/${token}`, { method: 'GET' }),
+    listTokens: () => this.request("/share/my-tokens", { method: "GET" }),
+    revoke: (tokenId: string) => this.request(`/share/${tokenId}`, { method: "DELETE" }),
+    getPublicTimeline: (token: string) => this.request(`/share/public/${token}`, { method: "GET" }),
   };
 }
 

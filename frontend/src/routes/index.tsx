@@ -75,8 +75,14 @@ function PhoneMockup({ t }: { t: ReturnType<typeof useT> }) {
   return (
     <div className="relative mx-auto w-full max-w-sm">
       {/* background blobs */}
-      <div className="absolute -top-6 -right-6 h-44 w-44 rounded-full bg-accent/20 blur-3xl" aria-hidden />
-      <div className="absolute -bottom-8 -left-6 h-52 w-52 rounded-full bg-primary/20 blur-3xl" aria-hidden />
+      <div
+        className="absolute -top-6 -right-6 h-44 w-44 rounded-full bg-accent/20 blur-3xl"
+        aria-hidden
+      />
+      <div
+        className="absolute -bottom-8 -left-6 h-52 w-52 rounded-full bg-primary/20 blur-3xl"
+        aria-hidden
+      />
 
       <div className="relative rounded-[2.5rem] border-[10px] border-foreground/90 bg-background p-4 shadow-2xl">
         {/* notch */}
@@ -193,9 +199,17 @@ function HomePage() {
           </nav>
 
           <div className="hidden md:flex items-center gap-2">
-            <VoiceButton startLabel={t.a11y.startScreenReading} stopLabel={t.a11y.stopScreenReading} />
+            <VoiceButton
+              startLabel={t.a11y.startScreenReading}
+              stopLabel={t.a11y.stopScreenReading}
+            />
             <ThemeToggle />
-            <LanguageSwitcher lang={lang} setLang={setLang} compact ariaLabel={t.a11y.selectLanguage} />
+            <LanguageSwitcher
+              lang={lang}
+              setLang={setLang}
+              compact
+              ariaLabel={t.a11y.selectLanguage}
+            />
             {isAuthenticated ? (
               <a
                 href="/dashboard"
@@ -222,7 +236,10 @@ function HomePage() {
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
-            <VoiceButton startLabel={t.a11y.startScreenReading} stopLabel={t.a11y.stopScreenReading} />
+            <VoiceButton
+              startLabel={t.a11y.startScreenReading}
+              stopLabel={t.a11y.stopScreenReading}
+            />
             <ThemeToggle />
             <button
               type="button"

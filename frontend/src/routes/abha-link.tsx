@@ -22,9 +22,13 @@ function ABHALinkPage() {
   const [isLinking, setIsLinking] = useState(false);
   const [isRequestingConsent, setIsRequestingConsent] = useState(false);
   const [isFetchingRecords, setIsFetchingRecords] = useState(false);
-  const [verificationResult, setVerificationResult] = useState<{ exists: boolean; user?: any; error?: string } | null>(null);
+  const [verificationResult, setVerificationResult] = useState<{
+    exists: boolean;
+    user?: any;
+    error?: string;
+  } | null>(null);
   const [consentRequest, setConsentRequest] = useState(null);
-  const [consentStatus, setConsentStatus] = useState('UNKNOWN');
+  const [consentStatus, setConsentStatus] = useState("UNKNOWN");
   const [records, setRecords] = useState([]);
   const [isLinked, setIsLinked] = useState(false);
   const [error, setError] = useState("");
@@ -47,7 +51,7 @@ function ABHALinkPage() {
       const status = response.data || response;
       setIsLinked(status.isLinked ?? false);
       setConsentRequest(status.consentRequest || status.consents || null);
-      setConsentStatus(status.abhaConsentStatus || 'UNKNOWN');
+      setConsentStatus(status.abhaConsentStatus || "UNKNOWN");
     } catch (err) {
       console.error("Failed to load ABHA status", err);
     }
@@ -62,7 +66,7 @@ function ABHALinkPage() {
       const response = await apiClient.abha.getConsentStatus();
       const data = response.data || response;
       setConsentRequest(data);
-      setConsentStatus(data.status || 'UNKNOWN');
+      setConsentStatus(data.status || "UNKNOWN");
     } catch (err) {
       console.error("Failed to refresh consent status", err);
     }
@@ -112,7 +116,7 @@ function ABHALinkPage() {
       const response = await apiClient.abha.createConsentRequest();
       const data = response.data || response;
       setConsentRequest(data);
-      setConsentStatus(data.status || 'PENDING');
+      setConsentStatus(data.status || "PENDING");
     } catch (err: any) {
       setError(err.message || "Failed to request ABHA consent");
     } finally {
@@ -232,17 +236,25 @@ function ABHALinkPage() {
             </div>
 
             {verificationResult && (
-              <Alert className={verificationResult.exists ? "border-green-200 bg-green-50" : "border-red-200 bg-red-50"}>
+              <Alert
+                className={
+                  verificationResult.exists
+                    ? "border-green-200 bg-green-50"
+                    : "border-red-200 bg-red-50"
+                }
+              >
                 {verificationResult.exists ? (
                   <CheckCircle className="h-4 w-4 text-green-600" />
                 ) : (
                   <AlertCircle className="h-4 w-4 text-red-600" />
                 )}
-                <AlertDescription className={verificationResult.exists ? "text-green-800" : "text-red-800"}>
+                <AlertDescription
+                  className={verificationResult.exists ? "text-green-800" : "text-red-800"}
+                >
                   {verificationResult.exists
-                    ? `Verified ABHA: ${verificationResult.user?.name || 'Verified patient'}`
-                    : verificationResult.error || "ABHA number not found. Please check and try again."
-                  }
+                    ? `Verified ABHA: ${verificationResult.user?.name || "Verified patient"}`
+                    : verificationResult.error ||
+                      "ABHA number not found. Please check and try again."}
                 </AlertDescription>
               </Alert>
             )}
@@ -252,8 +264,12 @@ function ABHALinkPage() {
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <p className="text-sm font-semibold">Consent request created</p>
-                    <p className="text-sm text-muted-foreground">ID: {consentRequest.consentId || consentRequest.id}</p>
-                    <p className="text-sm text-muted-foreground">Status: {consentRequest.status || consentStatus || 'PENDING'}</p>
+                    <p className="text-sm text-muted-foreground">
+                      ID: {consentRequest.consentId || consentRequest.id}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Status: {consentRequest.status || consentStatus || "PENDING"}
+                    </p>
                   </div>
                   <Button
                     onClick={refreshConsentStatus}
@@ -272,10 +288,15 @@ function ABHALinkPage() {
                 <h2 className="text-base font-semibold">Fetched Health Records</h2>
                 <div className="space-y-3">
                   {records.map((record, index) => (
-                    <div key={record.id || index} className="rounded-lg border border-border bg-card p-3">
+                    <div
+                      key={record.id || index}
+                      className="rounded-lg border border-border bg-card p-3"
+                    >
                       <p className="text-sm font-semibold">{record.title || record.type}</p>
                       <p className="text-sm text-muted-foreground">{record.date}</p>
-                      <p className="text-sm">{record.content || record.description || record.summary}</p>
+                      <p className="text-sm">
+                        {record.content || record.description || record.summary}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -316,9 +337,7 @@ function ABHALinkPage() {
             {error && (
               <Alert className="border-red-200 bg-red-50">
                 <AlertCircle className="h-4 w-4 text-red-600" />
-                <AlertDescription className="text-red-800">
-                  {error}
-                </AlertDescription>
+                <AlertDescription className="text-red-800">{error}</AlertDescription>
               </Alert>
             )}
 

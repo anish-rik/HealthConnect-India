@@ -3,7 +3,19 @@ import { useAuth } from "@/components/auth-provider";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { apiClient } from "@/lib/apiClient";
-import { FileText, Calendar, User, LogOut, IdCard, QrCode, X, Download, Copy, Clock, Check } from "lucide-react";
+import {
+  FileText,
+  Calendar,
+  User,
+  LogOut,
+  IdCard,
+  QrCode,
+  X,
+  Download,
+  Copy,
+  Clock,
+  Check,
+} from "lucide-react";
 import { AppIcon } from "@/components/logo";
 import { QRCodeSVG } from "qrcode.react";
 
@@ -48,7 +60,12 @@ function DashboardPage() {
 
   // QR Code state
   const [showQrModal, setShowQrModal] = useState(false);
-  const [qrData, setQrData] = useState<{ shareUrl: string; expiresAt: string; token: string } | null>(null);
+  const [qrRecordId, setQrRecordId] = useState<string | null>(null);
+  const [qrData, setQrData] = useState<{
+    shareUrl: string;
+    expiresAt: string;
+    token: string;
+  } | null>(null);
   const [qrLoading, setQrLoading] = useState(false);
   const [qrExpiry, setQrExpiry] = useState(24);
   const [copied, setCopied] = useState(false);
@@ -158,10 +175,7 @@ function DashboardPage() {
                 </div>
               </div>
               <p className="text-sm text-muted-foreground mb-4">{user?.email}</p>
-              <a
-                href="/profile"
-                className="text-primary text-sm font-medium hover:underline"
-              >
+              <a href="/profile" className="text-primary text-sm font-medium hover:underline">
                 Edit Profile →
               </a>
             </div>
@@ -169,20 +183,23 @@ function DashboardPage() {
             {/* ABHA Card */}
             <div className="bg-card border border-border rounded-lg p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
-                  abhaStatus?.isLinked ? 'bg-success/20' : 'bg-warning/20'
-                }`}>
-                  <IdCard className={abhaStatus?.isLinked ? 'text-success' : 'text-warning'} size={24} />
+                <div
+                  className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                    abhaStatus?.isLinked ? "bg-success/20" : "bg-warning/20"
+                  }`}
+                >
+                  <IdCard
+                    className={abhaStatus?.isLinked ? "text-success" : "text-warning"}
+                    size={24}
+                  />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">ABHA Status</p>
-                  <p className="font-semibold">{abhaStatus?.isLinked ? 'Linked' : 'Not Linked'}</p>
+                  <p className="font-semibold">{abhaStatus?.isLinked ? "Linked" : "Not Linked"}</p>
                 </div>
               </div>
               {abhaStatus?.isLinked ? (
-                <p className="text-sm text-muted-foreground">
-                  ABHA: {abhaStatus.abhaId}
-                </p>
+                <p className="text-sm text-muted-foreground">ABHA: {abhaStatus.abhaId}</p>
               ) : (
                 <button
                   onClick={() => navigate({ to: "/abha-link" })}
@@ -249,7 +266,7 @@ function DashboardPage() {
                         setRecords(result.records);
                       }
                     } catch (error) {
-                      console.error('Error fetching health records:', error);
+                      console.error("Error fetching health records:", error);
                     } finally {
                       setIsLoading(false);
                     }
@@ -266,7 +283,10 @@ function DashboardPage() {
                 + Upload Record
               </a>
               <button
-                onClick={() => setShowQrModal(true)}
+                onClick={() => {
+                  setQrRecordId(null);
+                  setShowQrModal(true);
+                }}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-lg hover:from-violet-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
               >
                 <QrCode size={18} />
@@ -301,10 +321,20 @@ function DashboardPage() {
                           </p>
                         )}
                       </div>
-                      <div className="text-right">
+                      <div className="text-right flex flex-col items-end gap-3">
                         <p className="text-sm text-muted-foreground">
                           {new Date(record.date).toLocaleDateString()}
                         </p>
+                        <button
+                          onClick={() => {
+                            setQrRecordId(record._id);
+                            setShowQrModal(true);
+                          }}
+                          className="flex items-center gap-1 text-xs px-2 py-1.5 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors"
+                          title="Generate QR to share this record"
+                        >
+                          <QrCode size={14} /> Share
+                        </button>
                       </div>
                     </div>
                   </div>
@@ -347,19 +377,19 @@ function DashboardPage() {
                       <div>
                         <div className="flex items-center gap-2 mb-2">
                           <h3 className="font-semibold text-foreground">{apt.reason}</h3>
-                          <span className={`text-xs px-2 py-1 rounded-full capitalize ${
-                            apt.status === "scheduled"
-                              ? "bg-blue-100 text-blue-700"
-                              : apt.status === "completed"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
-                          }`}>
+                          <span
+                            className={`text-xs px-2 py-1 rounded-full capitalize ${
+                              apt.status === "scheduled"
+                                ? "bg-blue-100 text-blue-700"
+                                : apt.status === "completed"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-red-100 text-red-700"
+                            }`}
+                          >
                             {apt.status}
                           </span>
                         </div>
-                        {apt.doctor && (
-                          <p className="text-sm text-body">Doctor: {apt.doctor}</p>
-                        )}
+                        {apt.doctor && <p className="text-sm text-body">Doctor: {apt.doctor}</p>}
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-foreground">
@@ -404,9 +434,13 @@ function DashboardPage() {
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <QrCode className="text-white" size={28} />
               </div>
-              <h2 className="text-xl font-bold text-foreground mb-1">Share Medical History</h2>
+              <h2 className="text-xl font-bold text-foreground mb-1">
+                {qrRecordId ? "Share Medical Record" : "Share Medical History"}
+              </h2>
               <p className="text-sm text-muted-foreground mb-6">
-                Generate a QR code so that anyone who scans it can view your medical timeline.
+                {qrRecordId
+                  ? "Generate a QR code so that anyone who scans it can view this specific record."
+                  : "Generate a QR code so that anyone who scans it can view your full medical timeline."}
               </p>
             </div>
 
@@ -437,10 +471,15 @@ function DashboardPage() {
                   onClick={async () => {
                     try {
                       setQrLoading(true);
-                      const result = await apiClient.share.generate({ expiryHours: qrExpiry });
+                      const payload: any = { expiryHours: qrExpiry };
+                      if (qrRecordId) {
+                        payload.recordId = qrRecordId;
+                        payload.label = "Specific Record Share";
+                      }
+                      const result = await apiClient.share.generate(payload);
                       setQrData(result.data);
                     } catch (error) {
-                      console.error('QR generation error:', error);
+                      console.error("QR generation error:", error);
                     } finally {
                       setQrLoading(false);
                     }
@@ -519,7 +558,9 @@ function DashboardPage() {
                         link.href = canvas.toDataURL("image/png");
                         link.click();
                       };
-                      img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgString)));
+                      img.src =
+                        "data:image/svg+xml;base64," +
+                        btoa(unescape(encodeURIComponent(svgString)));
                     }}
                     className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
                   >

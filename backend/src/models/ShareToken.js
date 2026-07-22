@@ -14,6 +14,11 @@ const shareTokenSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    recordId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'HealthRecord',
+      default: null,
+    },
     label: {
       type: String,
       default: 'Medical History QR',

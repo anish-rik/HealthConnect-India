@@ -105,7 +105,7 @@ function LoginPage() {
                   id="phone"
                   type="tel"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                   placeholder="9876543210"
                   maxLength={10}
                   required={loginMethod === "phone"}

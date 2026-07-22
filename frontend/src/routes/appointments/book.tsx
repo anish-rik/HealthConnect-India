@@ -13,13 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   ArrowLeft,
@@ -108,9 +102,7 @@ function BookAppointmentPage() {
       return;
     }
 
-    const slot = TIME_SLOTS.find(
-      (s) => `${s.startTime}-${s.endTime}` === selectedSlot
-    );
+    const slot = TIME_SLOTS.find((s) => `${s.startTime}-${s.endTime}` === selectedSlot);
     if (!slot) {
       setError("Invalid time slot");
       return;
@@ -170,9 +162,7 @@ function BookAppointmentPage() {
           <div className="flex items-center gap-3 ml-2">
             <AppIcon size={32} />
             <div>
-              <h1 className="text-xl font-bold text-primary">
-                Book Appointment
-              </h1>
+              <h1 className="text-xl font-bold text-primary">Book Appointment</h1>
               <p className="text-sm text-muted-foreground">
                 Schedule a new appointment with a doctor
               </p>
@@ -208,9 +198,7 @@ function BookAppointmentPage() {
                 <Stethoscope className="h-5 w-5 text-primary" />
                 Doctor Details
               </CardTitle>
-              <CardDescription>
-                Enter the name of the doctor you'd like to see.
-              </CardDescription>
+              <CardDescription>Enter the name of the doctor you'd like to see.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
@@ -235,9 +223,7 @@ function BookAppointmentPage() {
                 <CalendarClock className="h-5 w-5 text-primary" />
                 Date & Time
               </CardTitle>
-              <CardDescription>
-                Pick a date and a 30-minute time slot.
-              </CardDescription>
+              <CardDescription>Pick a date and a 30-minute time slot.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="space-y-2">
@@ -334,18 +320,10 @@ function BookAppointmentPage() {
 
           {/* ── Submit ── */}
           <div className="flex items-center justify-end gap-4 pb-8">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate({ to: "/dashboard" })}
-            >
+            <Button type="button" variant="outline" onClick={() => navigate({ to: "/dashboard" })}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="min-w-[160px]"
-            >
+            <Button type="submit" disabled={isSubmitting} className="min-w-[160px]">
               {isSubmitting ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

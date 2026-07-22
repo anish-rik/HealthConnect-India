@@ -1,11 +1,11 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { apiClient } from '@/lib/apiClient';
+import { createContext, useContext, useEffect, useState } from "react";
+import { apiClient } from "@/lib/apiClient";
 
 interface User {
   id: string;
   email: string;
   name: string;
-  role: 'user' | 'doctor' | 'admin';
+  role: "user" | "doctor" | "admin";
   phone?: string;
   dateOfBirth?: string;
   gender?: string;
@@ -32,11 +32,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize from localStorage
   useEffect(() => {
-    const savedToken = localStorage.getItem('authToken');
+    const savedToken = localStorage.getItem("authToken");
     if (savedToken) {
       apiClient.setToken(savedToken);
       setToken(savedToken);
-      
+
       // Fetch user profile
       apiClient.auth
         .getProfile()
@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(res.data);
         })
         .catch(() => {
-          localStorage.removeItem('authToken');
+          localStorage.removeItem("authToken");
           setToken(null);
         })
         .finally(() => setIsLoading(false));
@@ -56,7 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (data: any) => {
     const res = await apiClient.auth.register(data);
     const { token: newToken, user: newUser } = res.data;
-    
+
     apiClient.setToken(newToken);
     setToken(newToken);
     setUser(newUser);
@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (phone: string, password: string) => {
     const res = await apiClient.auth.login({ phone, password });
     const { token: newToken, user: newUser } = res.data;
-    
+
     apiClient.setToken(newToken);
     setToken(newToken);
     setUser(newUser);
@@ -74,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginAbha = async (abhaId: string, password: string) => {
     const res = await apiClient.auth.loginAbha({ abhaId, password });
     const { token: newToken, user: newUser } = res.data;
-    
+
     apiClient.setToken(newToken);
     setToken(newToken);
     setUser(newUser);
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     apiClient.removeToken();
     setToken(null);
     setUser(null);
-    localStorage.removeItem('authToken');
+    localStorage.removeItem("authToken");
   };
 
   const updateProfile = async (data: any) => {
@@ -114,7 +114,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
+    throw new Error("useAuth must be used within AuthProvider");
   }
   return context;
 }

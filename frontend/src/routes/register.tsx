@@ -186,7 +186,10 @@ function RegisterPage() {
 
             {/* Confirm Password */}
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-foreground mb-2">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-foreground mb-2"
+              >
                 Confirm Password
               </label>
               <div className="relative">

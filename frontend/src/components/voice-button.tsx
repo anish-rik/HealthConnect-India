@@ -19,20 +19,20 @@ export function VoiceButton({ startLabel, stopLabel }: VoiceButtonProps) {
   // Get appropriate speech settings for different languages
   // Indian languages need slower rates due to complex pronunciation patterns
   const getSpeechSettings = (lang: string) => {
-    const slowerLanguages = ['hi', 'kn', 'bn', 'ta', 'te', 'ml'];
-    const baseLang = lang.split('-')[0];
-    
+    const slowerLanguages = ["hi", "kn", "bn", "ta", "te", "ml"];
+    const baseLang = lang.split("-")[0];
+
     if (slowerLanguages.includes(baseLang)) {
       return {
-        rate: 0.8,    // 20% slower for better comprehension of complex scripts
-        volume: 0.9,  // Slightly lower volume for clearer articulation
-        pitch: 1.1    // Higher pitch helps with phonetic clarity
+        rate: 0.8, // 20% slower for better comprehension of complex scripts
+        volume: 0.9, // Slightly lower volume for clearer articulation
+        pitch: 1.1, // Higher pitch helps with phonetic clarity
       };
     }
     return {
-      rate: 1.0,     // Normal speed for English
-      volume: 1.0,   // Full volume
-      pitch: 1.0     // Normal pitch
+      rate: 1.0, // Normal speed for English
+      volume: 1.0, // Full volume
+      pitch: 1.0, // Normal pitch
     };
   };
 
@@ -54,13 +54,15 @@ export function VoiceButton({ startLabel, stopLabel }: VoiceButtonProps) {
         heroSubtitle,
         "How it works: " + howHeading,
         "Features: " + featuresHeading,
-        "HealthConnect India helps you access your health records easily."
-      ].join(". ").slice(0, 1500);
+        "HealthConnect India helps you access your health records easily.",
+      ]
+        .join(". ")
+        .slice(0, 1500);
 
       const utterance = new SpeechSynthesisUtterance(textToRead);
       const currentLang = document.documentElement.lang || "en-IN";
       utterance.lang = currentLang;
-      
+
       const settings = getSpeechSettings(currentLang);
       utterance.rate = settings.rate;
       utterance.volume = settings.volume;
@@ -82,14 +84,8 @@ export function VoiceButton({ startLabel, stopLabel }: VoiceButtonProps) {
       className="grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-foreground transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       aria-label={isSpeaking ? stopLabel : startLabel}
     >
-      {isSpeaking ? (
-        <VolumeX className="h-5 w-5" />
-      ) : (
-        <Volume2 className="h-5 w-5" />
-      )}
-      <span className="sr-only">
-        {isSpeaking ? stopLabel : startLabel}
-      </span>
+      {isSpeaking ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
+      <span className="sr-only">{isSpeaking ? stopLabel : startLabel}</span>
     </button>
   );
 }

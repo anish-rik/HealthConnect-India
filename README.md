@@ -218,5 +218,5 @@ npm run format
 
 This repository is optimized for quick hosting setups:
 
-- **Frontend**: Set up for Vercel deployment with routing configuration inside [vercel.json](file:///Users/gouravyadav/Downloads/HealthConnect-India/frontend/vercel.json).
+- **Frontend**: Set up for Vercel deployment with routing configuration inside `vercel.json` at the repository root.
 - **Backend**: Managed through the infrastructure blueprint [render.yaml](file:///Users/gouravyadav/Downloads/HealthConnect-India/render.yaml) for fast deployment on Render.

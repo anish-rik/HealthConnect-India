@@ -1,4 +1,4 @@
-﻿import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { useNavigate } from "@tanstack/react-router";
@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, CheckCircle, AlertCircle, Link as LinkIcon } from "lucide-react";
+import { AppIcon } from "@/components/logo";
 
 export const Route = createFileRoute("/abha-link")({
   component: ABHALinkPage,
@@ -161,7 +162,7 @@ function ABHALinkPage() {
         <Card>
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2 text-primary">
-              <LinkIcon size={24} />
+              <AppIcon size={32} />
               Link Your ABHA ID
             </CardTitle>
             <CardDescription>

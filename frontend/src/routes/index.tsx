@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { ThemeToggle } from "../components/theme-toggle";
 import { VoiceButton } from "../components/voice-button";
 import { useAuth } from "../components/auth-provider";
+import { Logo, AppIcon } from "../components/logo";
 import {
-  Activity,
   IdCard,
   FolderOpen,
   ShieldCheck,
@@ -15,7 +15,6 @@ import {
   Check,
   Menu,
   X,
-  HeartPulse,
   FileText,
   Pill,
   ClipboardList,
@@ -70,25 +69,7 @@ function LanguageSwitcher({
   );
 }
 
-function Logo({ onDark = false }: { onDark?: boolean }) {
-  return (
-    <a href="#top" className="flex items-center gap-2.5" aria-label="HealthConnect India home">
-      <span className="grid h-10 w-10 place-items-center rounded-full bg-primary">
-        <Activity className="h-5 w-5 text-primary-foreground" strokeWidth={2.5} aria-hidden />
-      </span>
-      <span className="leading-tight">
-        <span
-          className={`block font-display text-lg font-bold ${
-            onDark ? "text-white" : "text-primary"
-          }`}
-        >
-          HealthConnect
-        </span>
-        <span className="block text-xs font-semibold text-accent -mt-0.5">India</span>
-      </span>
-    </a>
-  );
-}
+/* Logo component is now imported from @/components/logo */
 
 function PhoneMockup({ t }: { t: ReturnType<typeof useT> }) {
   return (
@@ -102,9 +83,7 @@ function PhoneMockup({ t }: { t: ReturnType<typeof useT> }) {
         <div className="mx-auto mb-3 h-1.5 w-20 rounded-full bg-foreground/20" aria-hidden />
         <div className="rounded-2xl bg-trust p-4">
           <div className="flex items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-full bg-primary">
-              <HeartPulse className="h-4 w-4 text-primary-foreground" aria-hidden />
-            </span>
+            <AppIcon size={36} />
             <div>
               <p className="font-display text-sm font-semibold text-foreground">
                 {t.hero.mockTitle}
@@ -197,7 +176,7 @@ function HomePage() {
       </a>
 
       {/* HEADER */}
-      <header role="banner" className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
+      <header role="banner" className="sticky top-0 z-40 border-b border-border bg-background">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-3 sm:px-6 lg:px-8">
           <Logo />
 
@@ -480,7 +459,7 @@ function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <div className="grid gap-10 md:grid-cols-3">
             <div>
-              <Logo onDark />
+              <Logo forceDark />
               <p className="mt-4 max-w-xs text-sm text-white/70">{t.footer.tagline}</p>
             </div>
 

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useAuth } from "@/components/auth-provider";
 import { useNavigate } from "@tanstack/react-router";
 import { Eye, EyeOff } from "lucide-react";
+import { AppIcon } from "@/components/logo";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -48,6 +49,7 @@ function LoginPage() {
         <div className="bg-card rounded-2xl border border-border shadow-lg p-8">
           {/* Header */}
           <div className="text-center mb-8">
+            <AppIcon size={56} className="mx-auto mb-4" />
             <h1 className="text-3xl font-bold text-primary mb-2">Welcome Back</h1>
             <p className="text-body">Sign in to access your health records</p>
           </div>

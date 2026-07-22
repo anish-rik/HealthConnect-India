@@ -33,6 +33,7 @@ import {
   Calendar,
   MapPin,
 } from "lucide-react";
+import { AppIcon } from "@/components/logo";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
@@ -175,7 +176,7 @@ function ProfilePage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5">
       {/* ── Header ── */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border bg-background">
         <div className="max-w-3xl mx-auto flex items-center gap-4 px-4 py-3 sm:px-6">
           <button
             onClick={() => navigate({ to: "/dashboard" })}
@@ -184,11 +185,14 @@ function ProfilePage() {
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-primary">Edit Profile</h1>
-            <p className="text-sm text-muted-foreground">
-              Update your personal information
-            </p>
+          <div className="flex items-center gap-3 ml-2">
+            <AppIcon size={32} />
+            <div>
+              <h1 className="text-xl font-bold text-primary">Edit Profile</h1>
+              <p className="text-sm text-muted-foreground">
+                Update your personal information
+              </p>
+            </div>
           </div>
         </div>
       </header>

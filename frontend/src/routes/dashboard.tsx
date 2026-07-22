@@ -4,6 +4,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
 import { FileText, Calendar, User, LogOut, IdCard } from "lucide-react";
+import { AppIcon } from "@/components/logo";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
@@ -97,9 +98,12 @@ function DashboardPage() {
       {/* Header */}
       <header className="border-b border-border bg-card shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-primary">Dashboard</h1>
-            <p className="text-muted-foreground">Welcome back, {user?.name}</p>
+          <div className="flex items-center gap-3">
+            <AppIcon size={40} />
+            <div>
+              <h1 className="text-2xl font-bold text-primary">Dashboard</h1>
+              <p className="text-muted-foreground">Welcome back, {user?.name}</p>
+            </div>
           </div>
           <button
             onClick={handleLogout}

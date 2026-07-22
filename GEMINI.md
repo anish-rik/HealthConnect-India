@@ -33,14 +33,14 @@ npm install
 # Copy .env.example to .env and configure MONGODB_URI
 npm run dev
 ```
-- **Port:** 5000 (default)
-- **Health Check:** `http://localhost:5000/health`
+- **Port:** 5001 (default)
+- **Health Check:** `http://localhost:5001/health`
 
 ### Frontend Setup
 ```bash
 cd frontend
 npm install
-# Create .env with VITE_API_URL=http://localhost:5000/api
+# Create .env with VITE_API_URL=http://localhost:5001/api
 npm run dev
 ```
 - **Port:** 5173 (default)

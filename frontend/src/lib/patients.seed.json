@@ -1,0 +1,630 @@
+{
+    "patients": [
+        {
+            "id": "P001",
+            "name": "Suresh Rao",
+            "gender": "male",
+            "age": 67,
+            "phone": "+91-98xxxxxx01",
+            "location": "Indiranagar, Bengaluru, Karnataka",
+            "abhaId": "412356789012",
+            "chronicConditions": [
+                "Type 2 diabetes mellitus",
+                "Hypertension",
+                "Dyslipidemia",
+                "Stable coronary artery disease"
+            ],
+            "timeline": [
+                {
+                    "eventId": "EVT-P001-2019-01",
+                    "date": "2019-09-12",
+                    "type": "OutpatientConsultation",
+                    "facilityName": "Shree Family Clinic, Indiranagar",
+                    "doctorName": "Dr. Manjunath",
+                    "doctorSpeciality": "General Medicine",
+                    "summary": "Initial diagnosis of type 2 diabetes, hypertension and dyslipidemia.",
+                    "diagnosis": [
+                        "Type 2 diabetes mellitus",
+                        "Stage 1 hypertension",
+                        "Dyslipidemia"
+                    ],
+                    "vitals": {
+                        "bp": "150/95",
+                        "bmi": 29
+                    },
+                    "tests": [
+                        {
+                            "name": "Fasting Plasma Glucose",
+                            "value": "168 mg/dL"
+                        },
+                        {
+                            "name": "Postprandial Glucose",
+                            "value": "248 mg/dL"
+                        },
+                        {
+                            "name": "HbA1c",
+                            "value": "8.4 %"
+                        },
+                        {
+                            "name": "Lipid Profile",
+                            "value": "Total 230, LDL 150, HDL 38, TG 210 mg/dL"
+                        }
+                    ],
+                    "prescriptions": [
+                        "Metformin 500 mg BD",
+                        "Amlodipine 5 mg OD",
+                        "Atorvastatin 10 mg HS"
+                    ],
+                    "documents": [],
+                    "abdmLinked": false,
+                    "consentStatus": "NONE"
+                },
+                {
+                    "eventId": "EVT-P001-2020-01",
+                    "date": "2020-01-15",
+                    "type": "OutpatientConsultation",
+                    "facilityName": "Shree Family Clinic, Indiranagar",
+                    "doctorName": "Dr. Manjunath",
+                    "doctorSpeciality": "General Medicine",
+                    "summary": "Diabetes follow-up; partial improvement in HbA1c and BP.",
+                    "diagnosis": [
+                        "Type 2 diabetes mellitus"
+                    ],
+                    "tests": [
+                        {
+                            "name": "HbA1c",
+                            "value": "7.6 %"
+                        }
+                    ],
+                    "vitals": {
+                        "bp": "140/90"
+                    },
+                    "prescriptions": [
+                        "Metformin 500 mg TDS",
+                        "Amlodipine 5 mg OD",
+                        "Atorvastatin 10 mg HS"
+                    ],
+                    "documents": [],
+                    "abdmLinked": false,
+                    "consentStatus": "NONE"
+                },
+                {
+                    "eventId": "EVT-P001-2021-01",
+                    "date": "2021-06-20",
+                    "type": "OutpatientConsultation",
+                    "facilityName": "ABC Heart Institute, Bengaluru",
+                    "doctorName": "Dr. K. Ramesh",
+                    "doctorSpeciality": "Cardiology",
+                    "summary": "Evaluation for exertional chest pain; diagnosed stable coronary artery disease.",
+                    "diagnosis": [
+                        "Stable coronary artery disease",
+                        "LV dysfunction"
+                    ],
+                    "tests": [
+                        {
+                            "name": "ECG",
+                            "value": "ST-T changes suggestive of ischemia"
+                        },
+                        {
+                            "name": "TMT",
+                            "value": "Positive for inducible ischemia"
+                        },
+                        {
+                            "name": "Echocardiography",
+                            "value": "Mild LV dysfunction, EF 50–55%"
+                        },
+                        {
+                            "name": "Lipid Profile",
+                            "value": "LDL 160 mg/dL"
+                        }
+                    ],
+                    "prescriptions": [
+                        "Aspirin 75 mg OD",
+                        "Clopidogrel 75 mg OD",
+                        "Atorvastatin 20 mg HS",
+                        "Metformin 500 mg TDS",
+                        "Amlodipine 5 mg OD"
+                    ],
+                    "documents": [
+                        {
+                            "id": "DOC-P001-TMT-2021",
+                            "type": "DiagnosticReport",
+                            "title": "Treadmill Test Report",
+                            "fileUrl": "/mock/abdm/P001/tmt_2021.pdf"
+                        },
+                        {
+                            "id": "DOC-P001-ECHO-2021",
+                            "type": "DiagnosticReport",
+                            "title": "Echocardiography Report",
+                            "fileUrl": "/mock/abdm/P001/echo_2021.pdf"
+                        }
+                    ],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                },
+                {
+                    "eventId": "EVT-P001-2022-01",
+                    "date": "2022-03-02",
+                    "type": "DischargeSummary",
+                    "facilityName": "ABC Heart Institute, Bengaluru",
+                    "doctorName": "Dr. K. Ramesh",
+                    "doctorSpeciality": "Cardiology",
+                    "summary": "Hospitalization for NSTEMI; PCI with stent to RCA.",
+                    "diagnosis": [
+                        "NSTEMI",
+                        "Single vessel coronary artery disease"
+                    ],
+                    "procedures": [
+                        "Coronary angiography",
+                        "Percutaneous coronary intervention with stent to RCA"
+                    ],
+                    "hospitalStay": {
+                        "admitDate": "2022-02-27",
+                        "dischargeDate": "2022-03-02"
+                    },
+                    "prescriptions": [
+                        "Aspirin 75 mg OD",
+                        "Clopidogrel 75 mg OD",
+                        "Atorvastatin 40 mg HS",
+                        "Bisoprolol 2.5 mg OD",
+                        "Metformin 500 mg TDS",
+                        "Glimepiride 1 mg OD"
+                    ],
+                    "documents": [
+                        {
+                            "id": "DOC-P001-DISCHARGE-ACS-2022",
+                            "type": "DischargeSummary",
+                            "title": "NSTEMI + PCI Discharge Summary",
+                            "fileUrl": "/mock/abdm/P001/discharge_nstemi_2022.pdf"
+                        },
+                        {
+                            "id": "DOC-P001-ANGIO-2022",
+                            "type": "DiagnosticReport",
+                            "title": "Coronary Angiography Report",
+                            "fileUrl": "/mock/abdm/P001/angiography_2022.pdf"
+                        }
+                    ],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                },
+                {
+                    "eventId": "EVT-P001-2023-01",
+                    "date": "2023-08-10",
+                    "type": "DiagnosticReport",
+                    "facilityName": "XYZ Diagnostics, Bengaluru",
+                    "doctorName": "Dr. Manjunath",
+                    "doctorSpeciality": "General Medicine",
+                    "summary": "Annual diabetes and cardiac check-up.",
+                    "tests": [
+                        {
+                            "name": "HbA1c",
+                            "value": "6.8 %"
+                        },
+                        {
+                            "name": "Fasting Lipid Profile",
+                            "value": "LDL 90, HDL 45 mg/dL"
+                        },
+                        {
+                            "name": "Urine Microalbumin",
+                            "value": "Borderline microalbuminuria"
+                        }
+                    ],
+                    "prescriptions": [
+                        "Continue current diabetes and cardiac medications",
+                        "Lifestyle modification and annual renal and retinal screening"
+                    ],
+                    "documents": [
+                        {
+                            "id": "DOC-P001-CHECKUP-2023",
+                            "type": "DiagnosticReport",
+                            "title": "Annual Health Check Package Report",
+                            "fileUrl": "/mock/abdm/P001/annual_checkup_2023.pdf"
+                        }
+                    ],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                }
+            ]
+        },
+        {
+            "id": "P002",
+            "name": "Meena Sharma",
+            "gender": "female",
+            "age": 54,
+            "phone": "+91-99xxxxxx22",
+            "location": "Rajajinagar, Bengaluru, Karnataka",
+            "abhaId": "418733442211",
+            "chronicConditions": [
+                "Bilateral osteoarthritis knees",
+                "Hypothyroidism",
+                "Obesity"
+            ],
+            "timeline": [
+                {
+                    "eventId": "EVT-P002-2020-01",
+                    "date": "2020-02-05",
+                    "type": "OutpatientConsultation",
+                    "facilityName": "Rajajinagar Ortho Clinic",
+                    "doctorName": "Dr. P. Kulkarni",
+                    "doctorSpeciality": "Orthopedics",
+                    "summary": "Initial evaluation of chronic bilateral knee pain; X-ray confirms Grade 3 OA.",
+                    "diagnosis": [
+                        "Osteoarthritis knee – bilateral, Grade 3"
+                    ],
+                    "tests": [
+                        {
+                            "name": "X-ray Both Knees",
+                            "value": "Joint space narrowing, osteophytes"
+                        }
+                    ],
+                    "prescriptions": [
+                        "NSAIDs PRN",
+                        "Physiotherapy – quadriceps strengthening",
+                        "Calcium + Vitamin D supplementation"
+                    ],
+                    "documents": [
+                        {
+                            "id": "DOC-P002-KNEE-XRAY-2020",
+                            "type": "DiagnosticReport",
+                            "title": "Knee X-ray Report",
+                            "fileUrl": "/mock/local/P002/knee_xray_2020.pdf"
+                        }
+                    ],
+                    "abdmLinked": false,
+                    "consentStatus": "NONE"
+                },
+                {
+                    "eventId": "EVT-P002-2021-01",
+                    "date": "2021-09-18",
+                    "type": "OutpatientConsultation",
+                    "facilityName": "Rajajinagar Ortho Clinic",
+                    "doctorName": "Dr. P. Kulkarni",
+                    "doctorSpeciality": "Orthopedics",
+                    "summary": "Worsening right knee pain; X-ray shows Grade 4 OA. Planned right TKR.",
+                    "diagnosis": [
+                        "End-stage OA right knee"
+                    ],
+                    "tests": [
+                        {
+                            "name": "X-ray Right Knee",
+                            "value": "Grade 4 OA"
+                        }
+                    ],
+                    "prescriptions": [
+                        "Pre-op physiotherapy",
+                        "Pain management"
+                    ],
+                    "documents": [],
+                    "abdmLinked": false,
+                    "consentStatus": "NONE"
+                },
+                {
+                    "eventId": "EVT-P002-2021-02",
+                    "date": "2021-10-05",
+                    "type": "DiagnosticReport",
+                    "facilityName": "City Multispeciality Hospital, Bengaluru",
+                    "doctorName": "Dr. Anil",
+                    "doctorSpeciality": "Anesthesiology",
+                    "summary": "Pre-anesthesia check-up; hypothyroidism detected.",
+                    "diagnosis": [
+                        "Hypothyroidism"
+                    ],
+                    "tests": [
+                        {
+                            "name": "TSH",
+                            "value": "Elevated"
+                        },
+                        {
+                            "name": "CBC / LFT / RFT / ECG",
+                            "value": "Within acceptable limits for surgery"
+                        }
+                    ],
+                    "prescriptions": [
+                        "Levothyroxine 50 mcg OD"
+                    ],
+                    "documents": [],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                },
+                {
+                    "eventId": "EVT-P002-2021-03",
+                    "date": "2021-11-02",
+                    "type": "DischargeSummary",
+                    "facilityName": "City Multispeciality Hospital, Bengaluru",
+                    "doctorName": "Dr. P. Kulkarni",
+                    "doctorSpeciality": "Orthopedics",
+                    "summary": "Right total knee replacement (cemented prosthesis); uneventful post-op course.",
+                    "diagnosis": [
+                        "End-stage OA right knee",
+                        "Status post right TKR"
+                    ],
+                    "procedures": [
+                        "Right Total Knee Replacement – cemented prosthesis"
+                    ],
+                    "hospitalStay": {
+                        "admitDate": "2021-10-29",
+                        "dischargeDate": "2021-11-02"
+                    },
+                    "prescriptions": [
+                        "Analgesics and antibiotics for 5 days",
+                        "Levothyroxine 50 mcg OD",
+                        "Calcium + Vitamin D",
+                        "Physiotherapy – ROM and strengthening"
+                    ],
+                    "documents": [
+                        {
+                            "id": "DOC-P002-DISCHARGE-TKR-RIGHT-2021",
+                            "type": "DischargeSummary",
+                            "title": "Right Knee TKR Discharge Summary",
+                            "fileUrl": "/mock/abdm/P002/discharge_tkr_right_2021.pdf"
+                        }
+                    ],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                },
+                {
+                    "eventId": "EVT-P002-2022-01",
+                    "date": "2022-12-10",
+                    "type": "OutpatientConsultation",
+                    "facilityName": "Rajajinagar Ortho Clinic",
+                    "doctorName": "Dr. P. Kulkarni",
+                    "doctorSpeciality": "Orthopedics",
+                    "summary": "One-year post-op review; good ROM and function in right knee.",
+                    "diagnosis": [
+                        "Status post right TKR – good outcome"
+                    ],
+                    "tests": [
+                        {
+                            "name": "X-ray Right Knee",
+                            "value": "Prosthesis in good position"
+                        }
+                    ],
+                    "prescriptions": [
+                        "Continue home exercises",
+                        "Weight reduction advice"
+                    ],
+                    "documents": [
+                        {
+                            "id": "DOC-P002-KNEE-XRAY-2022",
+                            "type": "DiagnosticReport",
+                            "title": "Right Knee X-ray Post-op",
+                            "fileUrl": "/mock/local/P002/knee_xray_2022.pdf"
+                        }
+                    ],
+                    "abdmLinked": false,
+                    "consentStatus": "NONE"
+                },
+                {
+                    "eventId": "EVT-P002-2024-01",
+                    "date": "2024-03-21",
+                    "type": "DischargeSummary",
+                    "facilityName": "City Multispeciality Hospital, Bengaluru",
+                    "doctorName": "Dr. P. Kulkarni",
+                    "doctorSpeciality": "Orthopedics",
+                    "summary": "Left total knee replacement for advanced OA.",
+                    "diagnosis": [
+                        "End-stage OA left knee",
+                        "Status post left TKR"
+                    ],
+                    "procedures": [
+                        "Left Total Knee Replacement – cemented prosthesis"
+                    ],
+                    "hospitalStay": {
+                        "admitDate": "2024-03-17",
+                        "dischargeDate": "2024-03-21"
+                    },
+                    "prescriptions": [
+                        "Analgesics and antibiotics",
+                        "Physiotherapy – bilateral knee rehab",
+                        "Levothyroxine 75 mcg OD"
+                    ],
+                    "documents": [
+                        {
+                            "id": "DOC-P002-DISCHARGE-TKR-LEFT-2024",
+                            "type": "DischargeSummary",
+                            "title": "Left Knee TKR Discharge Summary",
+                            "fileUrl": "/mock/abdm/P002/discharge_tkr_left_2024.pdf"
+                        }
+                    ],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                }
+            ]
+        },
+        {
+            "id": "P003",
+            "name": "Rahul Verma",
+            "gender": "male",
+            "age": 29,
+            "phone": "+91-97xxxxxx33",
+            "location": "Tumakuru, Karnataka",
+            "abhaId": "415599883300",
+            "chronicConditions": [
+                "Bronchial asthma",
+                "Allergic rhinitis",
+                "Recurrent upper respiratory infections"
+            ],
+            "timeline": [
+                {
+                    "eventId": "EVT-P003-2021-01",
+                    "date": "2021-12-09",
+                    "type": "OutpatientConsultation",
+                    "facilityName": "Tumakuru District Hospital",
+                    "doctorName": "Dr. S. Prakash",
+                    "doctorSpeciality": "General Medicine",
+                    "summary": "Initial diagnosis of mild persistent bronchial asthma.",
+                    "diagnosis": [
+                        "Mild persistent bronchial asthma"
+                    ],
+                    "tests": [
+                        {
+                            "name": "Chest X-ray",
+                            "value": "No acute pathology"
+                        },
+                        {
+                            "name": "CBC",
+                            "value": "Mild eosinophilia"
+                        }
+                    ],
+                    "prescriptions": [
+                        "Inhaled ICS/LABA – BD",
+                        "Rescue inhaler (salbutamol) PRN"
+                    ],
+                    "documents": [],
+                    "abdmLinked": false,
+                    "consentStatus": "NONE"
+                },
+                {
+                    "eventId": "EVT-P003-2022-01",
+                    "date": "2022-07-03",
+                    "type": "EmergencyVisit",
+                    "facilityName": "ABC Multispeciality Hospital, Bengaluru",
+                    "doctorName": "Dr. Neha",
+                    "doctorSpeciality": "Pulmonology",
+                    "summary": "Acute severe asthma exacerbation after viral infection; managed with nebulization and IV steroids.",
+                    "diagnosis": [
+                        "Acute severe asthma exacerbation"
+                    ],
+                    "tests": [
+                        {
+                            "name": "ABG",
+                            "value": "Mild respiratory alkalosis"
+                        },
+                        {
+                            "name": "Chest X-ray",
+                            "value": "Hyperinflation pattern"
+                        }
+                    ],
+                    "hospitalStay": {
+                        "admitDate": "2022-07-03",
+                        "dischargeDate": "2022-07-05"
+                    },
+                    "prescriptions": [
+                        "Nebulized bronchodilators",
+                        "Short course IV steroids",
+                        "Step-up ICS/LABA dose",
+                        "Influenza vaccination advice"
+                    ],
+                    "documents": [
+                        {
+                            "id": "DOC-P003-ER-DISCHARGE-2022",
+                            "type": "DischargeSummary",
+                            "title": "ER Discharge Summary – Asthma Exacerbation",
+                            "fileUrl": "/mock/abdm/P003/er_discharge_2022.pdf"
+                        }
+                    ],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                },
+                {
+                    "eventId": "EVT-P003-2022-02",
+                    "date": "2022-08-10",
+                    "type": "DiagnosticReport",
+                    "facilityName": "ABC Multispeciality Hospital, Bengaluru",
+                    "doctorName": "Dr. Neha",
+                    "doctorSpeciality": "Pulmonology",
+                    "summary": "Spirometry shows moderate obstruction with good reversibility; asthma classified as moderate persistent.",
+                    "diagnosis": [
+                        "Moderate persistent asthma"
+                    ],
+                    "tests": [
+                        {
+                            "name": "Spirometry",
+                            "value": "Reduced FEV1 with significant post-bronchodilator improvement"
+                        }
+                    ],
+                    "prescriptions": [
+                        "Higher-dose ICS/LABA",
+                        "Montelukast at night"
+                    ],
+                    "documents": [
+                        {
+                            "id": "DOC-P003-SPIROMETRY-2022",
+                            "type": "DiagnosticReport",
+                            "title": "Spirometry Report",
+                            "fileUrl": "/mock/abdm/P003/spirometry_2022.pdf"
+                        }
+                    ],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                },
+                {
+                    "eventId": "EVT-P003-2023-01",
+                    "date": "2023-04-15",
+                    "type": "OutpatientConsultation",
+                    "facilityName": "ABC Multispeciality Hospital, Bengaluru",
+                    "doctorName": "Dr. Neha",
+                    "doctorSpeciality": "Pulmonology",
+                    "summary": "Seasonal exacerbation; managed with OPD nebulization and short oral steroid course.",
+                    "diagnosis": [
+                        "Mild asthma exacerbation"
+                    ],
+                    "tests": [
+                        {
+                            "name": "Peak Flow",
+                            "value": "Reduced compared to personal best"
+                        }
+                    ],
+                    "prescriptions": [
+                        "Nebulized bronchodilators",
+                        "Short oral steroid course",
+                        "Continuation of controller therapy"
+                    ],
+                    "documents": [],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                },
+                {
+                    "eventId": "EVT-P003-2024-01",
+                    "date": "2024-09-01",
+                    "type": "Vaccination",
+                    "facilityName": "Tumakuru District Hospital",
+                    "doctorName": "Dr. S. Prakash",
+                    "doctorSpeciality": "General Medicine",
+                    "summary": "Preventive vaccination for asthma management.",
+                    "diagnosis": [
+                        "Bronchial asthma – on controller therapy"
+                    ],
+                    "vaccinations": [
+                        {
+                            "name": "Influenza vaccine",
+                            "dose": "Single annual dose"
+                        },
+                        {
+                            "name": "Pneumococcal vaccine",
+                            "dose": "As per schedule"
+                        }
+                    ],
+                    "documents": [],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                },
+                {
+                    "eventId": "EVT-P003-2025-01",
+                    "date": "2025-11-20",
+                    "type": "TeleConsultation",
+                    "facilityName": "ABC Multispeciality Hospital, Bengaluru",
+                    "doctorName": "Dr. Neha",
+                    "doctorSpeciality": "Pulmonology",
+                    "summary": "Video consultation during pollution episode in Bengaluru; symptoms controlled, no hospitalization.",
+                    "diagnosis": [
+                        "Stable moderate persistent asthma"
+                    ],
+                    "prescriptions": [
+                        "Continue controller inhalers",
+                        "Mask use and pollution avoidance",
+                        "Home peak-flow monitoring"
+                    ],
+                    "teleDetails": {
+                        "mode": "video",
+                        "platform": "HealthConnect India",
+                        "durationMinutes": 20
+                    },
+                    "documents": [],
+                    "abdmLinked": true,
+                    "consentStatus": "APPROVED"
+                }
+            ]
+        }
+    ]
+}

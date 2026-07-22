@@ -106,10 +106,10 @@ cd HealthConnect-India
    ```bash
    npm run dev
    ```
-   _Note: If no connection is made to a remote MongoDB, the backend automatically boots a local `mongodb-memory-server` and seeds it with demo accounts. This makes local setup completely zero-config._
+   _Note: If no connection is made to a remote MongoDB (or if the connected database is empty), the backend automatically seeds it with demo accounts. If MongoDB connection fails, it boots a local `mongodb-memory-server` and seeds it automatically. This makes local setup completely zero-config._
 
-- **API Base URL**: `http://localhost:5000/api`
-- **Health Check Endpoint**: `http://localhost:5000/health`
+- **API Base URL**: `http://localhost:5001/api`
+- **Health Check Endpoint**: `http://localhost:5001/health`
 
 ---
 
@@ -125,7 +125,7 @@ cd HealthConnect-India
    ```
 3. Set up the development API URL configuration in `.env`:
    ```bash
-   echo "VITE_API_URL=http://localhost:5000/api" > .env
+   echo "VITE_API_URL=http://localhost:5001/api" > .env
    ```
 4. **Run Application in Development Mode:**
    ```bash

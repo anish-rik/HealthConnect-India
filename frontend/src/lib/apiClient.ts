@@ -1,3 +1,5 @@
+import { handleMockRequest } from "./mockApi";
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
 
 class ApiClient {
@@ -34,14 +36,29 @@ class ApiClient {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await response.json().catch(() => ({}));
+        // If HTTP 404/502/503 or backend error on Vercel deployment, fallback to mock mode for demo user testing
+        if (response.status === 404 || response.status >= 500) {
+          console.warn(`[ApiClient] Server returned status ${response.status} for ${endpoint}. Falling back to demo mode.`);
+          return await handleMockRequest(endpoint, options, this.token);
+        }
         throw new Error(error.error || "API request failed");
       }
 
       return await response.json();
-    } catch (error) {
-      console.error("API Error:", error);
-      throw error;
+    } catch (error: any) {
+      console.warn(`[ApiClient] Network fetch failed for ${endpoint}:`, error.message);
+      // Automatically fallback to client-side demo mode when backend server is not running or unreachable (e.g. Vercel deployment)
+      try {
+        const mockResult = await handleMockRequest(endpoint, options, this.token);
+        if (mockResult && mockResult.token) {
+          this.setToken(mockResult.token);
+        }
+        return mockResult;
+      } catch (mockError) {
+        console.error("Mock fallback failed:", mockError);
+        throw error;
+      }
     }
   }
 
@@ -65,14 +82,17 @@ class ApiClient {
       });
 
       if (!response.ok) {
-        const error = await response.json();
+        const error = await response.json().catch(() => ({}));
+        if (response.status === 404 || response.status >= 500) {
+          return await handleMockRequest(endpoint, { method }, this.token);
+        }
         throw new Error(error.error || "API request failed");
       }
 
       return await response.json();
     } catch (error) {
-      console.error("API Upload Error:", error);
-      throw error;
+      console.warn(`[ApiClient] Upload fetch failed for ${endpoint}, using demo fallback.`);
+      return await handleMockRequest(endpoint, { method }, this.token);
     }
   }
 

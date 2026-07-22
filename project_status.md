@@ -23,7 +23,7 @@ HealthConnect India is a comprehensive health records management platform built 
   - Contains an integrated `mongodb-memory-server` fallback for smooth local testing (if remote MongoDB Atlas fails).
   - Handles custom authentication endpoints (`/api/auth/login`, `/api/auth/login-abha`).
 - **Demo Data**: **✅ SEEDED**
-  - The in-memory database automatically seeds itself with users, complete health records (prescriptions, lab tests, visit summaries), and appointments to test the timeline.
+  - Automatically seeds users, complete health records (prescriptions, lab tests, visit summaries), and appointments on any empty database (both remote MongoDB Atlas and local in-memory fallback).
 
 ## 🧑‍⚕️ Demo Account Login Credentials
 You can log in to test the application using either the user's Phone Number or ABHA ID along with their password.

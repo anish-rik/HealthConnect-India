@@ -33,49 +33,19 @@ const connectDB = async () => {
       const User = require('../models/User');
       const HealthRecord = require('../models/HealthRecord');
       const Appointment = require('../models/Appointment');
+      const fs = require('fs');
+      const path = require('path');
       
-      const demoEmail1 = 'test@example.com';
-      const demoEmail2 = 'demo@healthconnect.in';
+      const seedPath = path.join(__dirname, '../../../patients.seed.json');
       
-      const existing = await User.findOne({ email: demoEmail1 });
+      const existing = await User.findOne({ role: 'doctor' });
       if (!existing) {
-        // 1. Create Male Demo User
-        const demoUserMale = new User({
-          name: 'Rajesh Kumar',
-          email: demoEmail1,
-          phone: '9876543210',
-          password: 'Password123!',
-          role: 'user',
-          isVerified: true,
-          gender: 'male',
-          dateOfBirth: new Date('1975-08-15'),
-          address: '42, MG Road, Indiranagar, Bangalore',
-          language: 'en',
-          abhaId: '91782560349180',
-          abhaConsentId: `consent_demo_${Date.now()}_1`,
-          abhaConsentStatus: 'APPROVED',
-        });
-        await demoUserMale.save();
-        
-        // 2. Create Female Demo User
-        const demoUserFemale = new User({
-          name: 'Priya Sharma',
-          email: demoEmail2,
-          phone: '9999999999',
-          password: 'Password123!',
-          role: 'user',
-          isVerified: true,
-          gender: 'female',
-          dateOfBirth: new Date('1982-03-10'),
-          address: '15, Park Street, Kolkata',
-          language: 'en',
-          abhaId: '12345678901234',
-          abhaConsentId: `consent_demo_${Date.now()}_2`,
-          abhaConsentStatus: 'APPROVED',
-        });
-        await demoUserFemale.save();
+        // Clear any existing data in the memory database just to be safe
+        await User.deleteMany({});
+        await HealthRecord.deleteMany({});
+        await Appointment.deleteMany({});
 
-        // 3. Create Doctor
+        // 1. Create Doctor
         const demoDoctor = new User({
           name: 'Dr. Anita Desai',
           email: 'dr.desai@healthconnect.in',
@@ -90,86 +60,82 @@ const connectDB = async () => {
         });
         await demoDoctor.save();
 
-        // 4. Create Health Records for Male User (Rajesh)
-        const maleRecords = [
-          {
-            userId: demoUserMale._id,
-            recordType: 'visit_summary',
-            title: 'Annual Health Checkup',
-            description: 'Routine annual health screening. Patient reports mild fatigue. Blood pressure slightly elevated.',
-            doctor: { name: demoDoctor.name, qualification: 'MBBS, MD', hospital: 'Apollo Hospital' },
-            date: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000), // 6 months ago
-            diagnosis: 'Pre-hypertension',
-            treatmentPlan: 'Lifestyle modifications, low sodium diet.',
-            medicines: [{ name: 'Amlodipine', dosage: '5mg', frequency: 'Once daily', duration: '30 days' }]
-          },
-          {
-            userId: demoUserMale._id,
-            recordType: 'lab_report',
-            title: 'Lipid Profile',
-            description: 'Routine cholesterol check.',
-            doctor: { name: demoDoctor.name, qualification: 'MBBS, MD', hospital: 'Apollo Hospital' },
-            date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000), // 2 months ago
-            diagnosis: 'Borderline high cholesterol',
-            labTests: [
-              { testName: 'Total Cholesterol', result: '220', normalRange: '<200', unit: 'mg/dL' },
-              { testName: 'LDL', result: '140', normalRange: '<100', unit: 'mg/dL' }
-            ]
+        // 2. Read patients.seed.json and insert patients
+        if (fs.existsSync(seedPath)) {
+          const seedData = JSON.parse(fs.readFileSync(seedPath, 'utf8'));
+          
+          for (const patient of seedData.patients) {
+            const email = `${patient.id.toLowerCase()}@example.com`;
+            const dobYear = new Date().getFullYear() - patient.age;
+            
+            const newUser = new User({
+              name: patient.name,
+              email: email,
+              phone: patient.phone.replace(/x/g, '0'), // Replace mask with 0 to pass validation
+              password: 'Password123!',
+              role: 'user',
+              isVerified: true,
+              gender: patient.gender,
+              dateOfBirth: new Date(`${dobYear}-01-01`),
+              address: patient.location,
+              language: 'en',
+              abhaId: patient.abhaId,
+              abhaConsentId: `consent_${patient.id}`,
+              abhaConsentStatus: 'APPROVED',
+            });
+            await newUser.save();
+
+            const recordsToInsert = [];
+            for (const evt of patient.timeline) {
+              let recordType = 'visit_summary';
+              if (evt.type === 'DischargeSummary') recordType = 'discharge_summary';
+              else if (evt.type === 'DiagnosticReport') recordType = 'diagnostic_report';
+              
+              const medicines = evt.prescriptions ? evt.prescriptions.map(p => ({
+                name: p,
+                dosage: 'As prescribed',
+                frequency: 'As prescribed',
+                duration: 'As prescribed'
+              })) : [];
+              
+              const labTests = evt.tests ? evt.tests.map(t => ({
+                testName: t.name,
+                result: t.value,
+                normalRange: '',
+                unit: ''
+              })) : [];
+
+              const attachments = evt.documents ? evt.documents.map(d => ({
+                filename: d.title,
+                url: d.fileUrl,
+                uploadedAt: new Date(evt.date)
+              })) : [];
+
+              recordsToInsert.push({
+                userId: newUser._id,
+                recordType: recordType,
+                title: evt.summary || evt.type,
+                description: evt.summary,
+                doctor: { 
+                  name: evt.doctorName || demoDoctor.name, 
+                  qualification: evt.doctorSpeciality || 'General Medicine', 
+                  hospital: evt.facilityName || 'Hospital' 
+                },
+                date: new Date(evt.date),
+                diagnosis: evt.diagnosis ? evt.diagnosis.join(', ') : '',
+                medicines: medicines,
+                labTests: labTests,
+                attachments: attachments
+              });
+            }
+            if (recordsToInsert.length > 0) {
+              await HealthRecord.insertMany(recordsToInsert);
+            }
           }
-        ];
-
-        // 5. Create Health Records for Female User (Priya)
-        const femaleRecords = [
-          {
-            userId: demoUserFemale._id,
-            recordType: 'prescription',
-            title: 'Thyroid Management',
-            description: 'Follow-up for hypothyroidism.',
-            doctor: { name: demoDoctor.name, qualification: 'MBBS, MD', hospital: 'Apollo Hospital' },
-            date: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000), // 3 months ago
-            diagnosis: 'Hypothyroidism',
-            treatmentPlan: 'Continue medication, re-evaluate in 6 months.',
-            medicines: [{ name: 'Thyroxine', dosage: '50mcg', frequency: 'Once daily morning', duration: '180 days' }]
-          },
-          {
-            userId: demoUserFemale._id,
-            recordType: 'diagnostic_report',
-            title: 'Ultrasound Abdomen',
-            description: 'Routine scan for abdominal pain.',
-            doctor: { name: demoDoctor.name, qualification: 'MBBS, MD', hospital: 'Apollo Hospital' },
-            date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 1 month ago
-            diagnosis: 'Normal study. No significant abnormality detected.',
-          }
-        ];
-
-        await HealthRecord.insertMany([...maleRecords, ...femaleRecords]);
-
-        // 6. Create Appointments
-        const appointments = [
-          {
-            userId: demoUserMale._id,
-            doctorId: demoDoctor._id,
-            appointmentDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Next week
-            timeSlot: { startTime: '10:00', endTime: '10:30' },
-            reason: 'Cardiology Checkup',
-            status: 'scheduled',
-            consultationType: 'in-person'
-          },
-          {
-            userId: demoUserFemale._id,
-            doctorId: demoDoctor._id,
-            appointmentDate: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
-            timeSlot: { startTime: '14:00', endTime: '14:30' },
-            reason: 'Thyroid Report Review',
-            status: 'completed',
-            consultationType: 'video',
-            notes: 'Reports look fine. Continue current dose.'
-          }
-        ];
-
-        await Appointment.insertMany(appointments);
-
-        console.log('✓ In-memory database seeded with demo users, records, and appointments');
+          console.log('✓ In-memory database seeded with patients from patients.seed.json');
+        } else {
+          console.warn('⚠ patients.seed.json not found at', seedPath);
+        }
       }
       
       return mongoose.connection;

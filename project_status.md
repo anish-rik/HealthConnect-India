@@ -28,14 +28,20 @@ HealthConnect India is a comprehensive health records management platform built 
 ## 🧑‍⚕️ Demo Account Login Credentials
 You can log in to test the application using either the user's Phone Number or ABHA ID along with their password.
 
-### 1. Male Demo Account (Rajesh Kumar)
-- **Phone Number**: `9876543210`
-- **ABHA ID**: `91782560349180`
+### 1. Suresh Rao
+- **Phone Number**: `+91-9800000001`
+- **ABHA ID**: `412356789012`
 - **Password**: `Password123!`
-- *Highlights*: Check the timeline for Pre-hypertension checkups, lipid profile labs, and future cardiology appointments.
+- *Highlights*: Diabetes and Cardiology. Timeline includes NSTEMI hospitalization, angiogram, and regular checkups.
 
-### 2. Female Demo Account (Priya Sharma)
-- **Phone Number**: `9999999999`
-- **ABHA ID**: `12345678901234`
+### 2. Meena Sharma
+- **Phone Number**: `+91-9900000022`
+- **ABHA ID**: `418733442211`
 - **Password**: `Password123!`
-- *Highlights*: Check the timeline for Hypothyroidism prescriptions, ultrasound reports, and past video consultation appointments.
+- *Highlights*: Orthopedics. Timeline includes bilateral total knee replacements and hypothyroidism management.
+
+### 3. Rahul Verma
+- **Phone Number**: `+91-9700000033`
+- **ABHA ID**: `415599883300`
+- **Password**: `Password123!`
+- *Highlights*: Pulmonology. Timeline includes asthma exacerbation, spirometry, teleconsultations, and vaccinations.

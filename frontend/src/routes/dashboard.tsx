@@ -15,6 +15,10 @@ import {
   Copy,
   Clock,
   Check,
+  AlertCircle,
+  Link2,
+  Trash2,
+  RefreshCw,
 } from "lucide-react";
 import { AppIcon } from "@/components/logo";
 import { QRCodeSVG } from "qrcode.react";
@@ -69,7 +73,16 @@ function DashboardPage() {
   const [qrLoading, setQrLoading] = useState(false);
   const [qrExpiry, setQrExpiry] = useState(24);
   const [copied, setCopied] = useState(false);
+  const [qrError, setQrError] = useState<string | null>(null);
   const qrRef = useRef<HTMLDivElement>(null);
+
+  // Active share tokens (Manage Links panel)
+  const [activeTokens, setActiveTokens] = useState<
+    { id: string; shareUrl: string; label: string; expiresAt: string; accessCount: number }[]
+  >([]);
+  const [tokensLoading, setTokensLoading] = useState(false);
+  const [revoking, setRevoking] = useState<string | null>(null);
+  const [qrModalTab, setQrModalTab] = useState<"generate" | "manage">("generate");
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -106,6 +119,32 @@ function DashboardPage() {
   const handleLogout = () => {
     logout();
     navigate({ to: "/" });
+  };
+
+  const loadActiveTokens = async () => {
+    try {
+      setTokensLoading(true);
+      const res = await apiClient.share.listTokens();
+      // Backend returns array in data; mock may return { data: [...] } or bare []
+      const list = Array.isArray(res) ? res : (res as any).data ?? [];
+      setActiveTokens(list);
+    } catch (err) {
+      console.error("Failed to load active tokens:", err);
+    } finally {
+      setTokensLoading(false);
+    }
+  };
+
+  const handleRevoke = async (tokenId: string) => {
+    try {
+      setRevoking(tokenId);
+      await apiClient.share.revoke(tokenId);
+      setActiveTokens((prev) => prev.filter((t) => t.id !== tokenId));
+    } catch (err) {
+      console.error("Failed to revoke token:", err);
+    } finally {
+      setRevoking(null);
+    }
   };
 
   if (authLoading) {
@@ -285,6 +324,9 @@ function DashboardPage() {
               <button
                 onClick={() => {
                   setQrRecordId(null);
+                  setQrData(null);
+                  setQrError(null);
+                  setQrModalTab("generate");
                   setShowQrModal(true);
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-lg hover:from-violet-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
@@ -328,6 +370,9 @@ function DashboardPage() {
                         <button
                           onClick={() => {
                             setQrRecordId(record._id);
+                            setQrData(null);
+                            setQrError(null);
+                            setQrModalTab("generate");
                             setShowQrModal(true);
                           }}
                           className="flex items-center gap-1 text-xs px-2 py-1.5 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors"
@@ -421,7 +466,7 @@ function DashboardPage() {
           />
 
           {/* Modal */}
-          <div className="relative bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in-95">
+          <div className="relative bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
             {/* Close button */}
             <button
               onClick={() => setShowQrModal(false)}
@@ -430,154 +475,284 @@ function DashboardPage() {
               <X size={18} />
             </button>
 
-            <div className="text-center">
+            <div className="text-center mb-4">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <QrCode className="text-white" size={28} />
               </div>
               <h2 className="text-xl font-bold text-foreground mb-1">
                 {qrRecordId ? "Share Medical Record" : "Share Medical History"}
               </h2>
-              <p className="text-sm text-muted-foreground mb-6">
+              <p className="text-sm text-muted-foreground">
                 {qrRecordId
                   ? "Generate a QR code so that anyone who scans it can view this specific record."
                   : "Generate a QR code so that anyone who scans it can view your full medical timeline."}
               </p>
             </div>
 
-            {!qrData ? (
-              /* Step 1: Configure & Generate */
-              <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
-                  Link expiry
-                </label>
-                <div className="grid grid-cols-4 gap-2 mb-6">
-                  {[1, 6, 24, 72].map((h) => (
+            {/* ── Tab switcher ── */}
+            <div className="flex rounded-lg bg-muted p-1 mb-5">
+              <button
+                onClick={() => setQrModalTab("generate")}
+                className={`flex-1 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  qrModalTab === "generate"
+                    ? "bg-card shadow text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <QrCode size={14} className="inline mr-1.5" />
+                Generate
+              </button>
+              <button
+                onClick={() => {
+                  setQrModalTab("manage");
+                  loadActiveTokens();
+                }}
+                className={`flex-1 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  qrModalTab === "manage"
+                    ? "bg-card shadow text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Link2 size={14} className="inline mr-1.5" />
+                My Links
+              </button>
+            </div>
+
+            {/* ══════════════ GENERATE TAB ══════════════ */}
+            {qrModalTab === "generate" && (
+              <>
+                {!qrData ? (
+                  /* Step 1: Configure & Generate */
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Link expiry
+                    </label>
+                    <div className="grid grid-cols-4 gap-2 mb-5">
+                      {[1, 6, 24, 72].map((h) => (
+                        <button
+                          key={h}
+                          onClick={() => setQrExpiry(h)}
+                          className={`py-2 rounded-lg text-sm font-medium transition-colors ${
+                            qrExpiry === h
+                              ? "bg-primary text-primary-foreground shadow-md"
+                              : "bg-muted text-muted-foreground hover:bg-muted/80"
+                          }`}
+                        >
+                          {h < 24 ? `${h}h` : `${h / 24}d`}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Error banner */}
+                    {qrError && (
+                      <div className="flex items-start gap-2 bg-destructive/10 border border-destructive/30 text-destructive rounded-lg px-3 py-2.5 mb-4 text-sm">
+                        <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                        <span>{qrError}</span>
+                      </div>
+                    )}
+
                     <button
-                      key={h}
-                      onClick={() => setQrExpiry(h)}
-                      className={`py-2 rounded-lg text-sm font-medium transition-colors ${
-                        qrExpiry === h
-                          ? "bg-primary text-primary-foreground shadow-md"
-                          : "bg-muted text-muted-foreground hover:bg-muted/80"
-                      }`}
+                      disabled={qrLoading}
+                      onClick={async () => {
+                        try {
+                          setQrError(null);
+                          setQrLoading(true);
+                          const payload: any = { expiryHours: qrExpiry };
+                          if (qrRecordId) {
+                            payload.recordId = qrRecordId;
+                            payload.label = "Specific Record Share";
+                          }
+                          const result = await apiClient.share.generate(payload);
+                          setQrData(result.data);
+                        } catch (error: any) {
+                          setQrError(
+                            error?.message ||
+                              "Failed to generate QR code. Please try again.",
+                          );
+                        } finally {
+                          setQrLoading(false);
+                        }
+                      }}
+                      className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
                     >
-                      {h < 24 ? `${h}h` : `${h / 24}d`}
+                      {qrLoading ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+                          Generating…
+                        </>
+                      ) : (
+                        <>
+                          <QrCode size={18} />
+                          Generate QR Code
+                        </>
+                      )}
                     </button>
-                  ))}
-                </div>
+                  </div>
+                ) : (
+                  /* Step 2: Show QR Code */
+                  <div>
+                    <div
+                      ref={qrRef}
+                      className="bg-white rounded-xl p-6 flex flex-col items-center mb-4 shadow-inner"
+                    >
+                      <QRCodeSVG
+                        value={qrData.shareUrl}
+                        size={200}
+                        level="H"
+                        includeMargin
+                        imageSettings={{
+                          src: "/images/icon-light.png",
+                          height: 36,
+                          width: 36,
+                          excavate: true,
+                        }}
+                      />
+                      <p className="text-xs text-slate-500 mt-3 text-center break-all max-w-[250px]">
+                        {qrData.shareUrl}
+                      </p>
+                    </div>
 
-                <button
-                  disabled={qrLoading}
-                  onClick={async () => {
-                    try {
-                      setQrLoading(true);
-                      const payload: any = { expiryHours: qrExpiry };
-                      if (qrRecordId) {
-                        payload.recordId = qrRecordId;
-                        payload.label = "Specific Record Share";
-                      }
-                      const result = await apiClient.share.generate(payload);
-                      setQrData(result.data);
-                    } catch (error) {
-                      console.error("QR generation error:", error);
-                    } finally {
-                      setQrLoading(false);
-                    }
-                  }}
-                  className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  {qrLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
-                      Generating…
-                    </>
-                  ) : (
-                    <>
-                      <QrCode size={18} />
-                      Generate QR Code
-                    </>
-                  )}
-                </button>
-              </div>
-            ) : (
-              /* Step 2: Show QR Code */
+                    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-4">
+                      <Clock size={12} />
+                      Expires: {new Date(qrData.expiresAt).toLocaleString()}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(qrData.shareUrl);
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 2000);
+                        }}
+                        className="flex items-center justify-center gap-2 py-2.5 rounded-lg border border-border hover:bg-muted transition-colors text-sm font-medium"
+                      >
+                        {copied ? (
+                          <Check size={16} className="text-green-500" />
+                        ) : (
+                          <Copy size={16} />
+                        )}
+                        {copied ? "Copied!" : "Copy Link"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          const svg = qrRef.current?.querySelector("svg");
+                          if (!svg) return;
+                          const serializer = new XMLSerializer();
+                          const svgString = serializer.serializeToString(svg);
+                          const canvas = document.createElement("canvas");
+                          canvas.width = 300;
+                          canvas.height = 300;
+                          const ctx = canvas.getContext("2d");
+                          const img = new Image();
+                          img.onload = () => {
+                            ctx?.drawImage(img, 0, 0, 300, 300);
+                            const link = document.createElement("a");
+                            link.download = "healthconnect-qr.png";
+                            link.href = canvas.toDataURL("image/png");
+                            link.click();
+                          };
+                          img.src =
+                            "data:image/svg+xml;base64," +
+                            btoa(unescape(encodeURIComponent(svgString)));
+                        }}
+                        className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
+                      >
+                        <Download size={16} />
+                        Download
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => {
+                        setQrData(null);
+                        setQrError(null);
+                        setCopied(false);
+                      }}
+                      className="w-full mt-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Generate a new one
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* ══════════════ MANAGE / MY LINKS TAB ══════════════ */}
+            {qrModalTab === "manage" && (
               <div>
-                <div
-                  ref={qrRef}
-                  className="bg-white rounded-xl p-6 flex flex-col items-center mb-4 shadow-inner"
-                >
-                  <QRCodeSVG
-                    value={qrData.shareUrl}
-                    size={200}
-                    level="H"
-                    includeMargin
-                    imageSettings={{
-                      src: "",
-                      height: 0,
-                      width: 0,
-                      excavate: false,
-                    }}
-                  />
-                  <p className="text-xs text-slate-500 mt-3 text-center break-all max-w-[250px]">
-                    {qrData.shareUrl}
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-sm text-muted-foreground">
+                    Active share links you've created
                   </p>
-                </div>
-
-                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-4">
-                  <Clock size={12} />
-                  Expires: {new Date(qrData.expiresAt).toLocaleString()}
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
                   <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(qrData.shareUrl);
-                      setCopied(true);
-                      setTimeout(() => setCopied(false), 2000);
-                    }}
-                    className="flex items-center justify-center gap-2 py-2.5 rounded-lg border border-border hover:bg-muted transition-colors text-sm font-medium"
+                    onClick={loadActiveTokens}
+                    disabled={tokensLoading}
+                    className="p-1.5 rounded-lg hover:bg-muted transition-colors disabled:opacity-50"
+                    title="Refresh"
                   >
-                    {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
-                    {copied ? "Copied!" : "Copy Link"}
-                  </button>
-                  <button
-                    onClick={() => {
-                      const svg = qrRef.current?.querySelector("svg");
-                      if (!svg) return;
-                      const serializer = new XMLSerializer();
-                      const svgString = serializer.serializeToString(svg);
-                      const canvas = document.createElement("canvas");
-                      canvas.width = 300;
-                      canvas.height = 300;
-                      const ctx = canvas.getContext("2d");
-                      const img = new Image();
-                      img.onload = () => {
-                        ctx?.drawImage(img, 0, 0, 300, 300);
-                        const link = document.createElement("a");
-                        link.download = "healthconnect-qr.png";
-                        link.href = canvas.toDataURL("image/png");
-                        link.click();
-                      };
-                      img.src =
-                        "data:image/svg+xml;base64," +
-                        btoa(unescape(encodeURIComponent(svgString)));
-                    }}
-                    className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
-                  >
-                    <Download size={16} />
-                    Download
+                    <RefreshCw size={14} className={tokensLoading ? "animate-spin" : ""} />
                   </button>
                 </div>
 
-                <button
-                  onClick={() => {
-                    setQrData(null);
-                    setCopied(false);
-                  }}
-                  className="w-full mt-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Generate a new one
-                </button>
+                {tokensLoading ? (
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+                  </div>
+                ) : activeTokens.length === 0 ? (
+                  <div className="text-center py-10 bg-muted/40 rounded-xl border border-border">
+                    <Link2 className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+                    <p className="text-sm font-medium text-foreground">No active links</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Links you generate will appear here.
+                    </p>
+                  </div>
+                ) : (
+                  <ul className="space-y-3">
+                    {activeTokens.map((t) => (
+                      <li
+                        key={t.id}
+                        className="bg-muted/50 border border-border rounded-xl p-3 flex items-start justify-between gap-3"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {t.label || "Medical History QR"}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1">
+                            <Clock size={11} />
+                            Expires {new Date(t.expiresAt).toLocaleString()}
+                          </p>
+                          {t.accessCount > 0 && (
+                            <p className="text-xs text-violet-600 mt-0.5">
+                              {t.accessCount} scan{t.accessCount !== 1 ? "s" : ""}
+                            </p>
+                          )}
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(t.shareUrl);
+                            }}
+                            className="text-xs text-primary hover:underline mt-1 flex items-center gap-1"
+                            title="Copy link"
+                          >
+                            <Copy size={10} />
+                            Copy link
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => handleRevoke(t.id)}
+                          disabled={revoking === t.id}
+                          className="shrink-0 p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                          title="Revoke this link"
+                        >
+                          {revoking === t.id ? (
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-destructive" />
+                          ) : (
+                            <Trash2 size={15} />
+                          )}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
           </div>

@@ -218,7 +218,43 @@ export async function handleMockRequest(endpoint: string, options: any = {}, cur
     };
   }
 
-  // 9. SHARE: Public Timeline
+  // 9. SHARE: List active tokens
+  if (endpoint === '/share/my-tokens' && method === 'GET') {
+    // Collect all share tokens stored by the generate mock
+    const tokens: any[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('share_token_')) {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(key) || '{}');
+          // Only return tokens belonging to the active user that haven't expired
+          if (parsed.userId === activeUser.id && new Date(parsed.expiresAt) > new Date()) {
+            tokens.push({
+              id: parsed.token,           // use token string as id in demo mode
+              token: parsed.token,
+              shareUrl: parsed.shareUrl,
+              label: parsed.recordId ? 'Specific Record Share' : 'Medical History QR',
+              expiresAt: parsed.expiresAt,
+              accessCount: 0,
+              createdAt: new Date().toISOString(),
+            });
+          }
+        } catch (_) {
+          // skip malformed entries
+        }
+      }
+    }
+    return { success: true, data: tokens };
+  }
+
+  // 10. SHARE: Revoke token
+  if (endpoint.startsWith('/share/') && method === 'DELETE') {
+    const tokenId = endpoint.replace('/share/', '');
+    localStorage.removeItem(`share_token_${tokenId}`);
+    return { success: true, message: 'Token revoked' };
+  }
+
+  // 11. SHARE: Public Timeline
   if (endpoint.startsWith('/share/public/')) {
     const token = endpoint.replace('/share/public/', '');
     const savedToken = localStorage.getItem(`share_token_${token}`);

@@ -17,6 +17,7 @@ import { Route as AbhaLinkRouteImport } from './routes/abha-link'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RecordsUploadRouteImport } from './routes/records/upload'
 import { Route as AppointmentsBookRouteImport } from './routes/appointments/book'
+import { Route as ShareTokenRouteImport } from './routes/share.$token'
 
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
@@ -58,6 +59,11 @@ const AppointmentsBookRoute = AppointmentsBookRouteImport.update({
   path: '/appointments/book',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ShareTokenRoute = ShareTokenRouteImport.update({
+  id: '/share/$token',
+  path: '/share/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/appointments/book': typeof AppointmentsBookRoute
   '/records/upload': typeof RecordsUploadRoute
+  '/share/$token': typeof ShareTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/register': typeof RegisterRoute
   '/appointments/book': typeof AppointmentsBookRoute
   '/records/upload': typeof RecordsUploadRoute
+  '/share/$token': typeof ShareTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/appointments/book': typeof AppointmentsBookRoute
   '/records/upload': typeof RecordsUploadRoute
+  '/share/$token': typeof ShareTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/appointments/book'
     | '/records/upload'
+    | '/share/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/appointments/book'
     | '/records/upload'
+    | '/share/$token'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/appointments/book'
     | '/records/upload'
+    | '/share/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   RegisterRoute: typeof RegisterRoute
   AppointmentsBookRoute: typeof AppointmentsBookRoute
   RecordsUploadRoute: typeof RecordsUploadRoute
+  ShareTokenRoute: typeof ShareTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppointmentsBookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/share/$token': {
+      id: '/share/$token'
+      path: '/share/$token'
+      fullPath: '/share/$token'
+      preLoaderRoute: typeof ShareTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterRoute: RegisterRoute,
   AppointmentsBookRoute: AppointmentsBookRoute,
   RecordsUploadRoute: RecordsUploadRoute,
+  ShareTokenRoute: ShareTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useAuth } from "@/components/auth-provider";
 import { useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { apiClient } from "@/lib/apiClient";
-import { FileText, Calendar, User, LogOut, IdCard } from "lucide-react";
+import { FileText, Calendar, User, LogOut, IdCard, QrCode, X, Download, Copy, Clock, Check } from "lucide-react";
 import { AppIcon } from "@/components/logo";
+import { QRCodeSVG } from "qrcode.react";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
@@ -44,6 +45,14 @@ function DashboardPage() {
   const [abhaStatus, setAbhaStatus] = useState<ABHAStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview" | "records" | "appointments">("overview");
+
+  // QR Code state
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [qrData, setQrData] = useState<{ shareUrl: string; expiresAt: string; token: string } | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
+  const [qrExpiry, setQrExpiry] = useState(24);
+  const [copied, setCopied] = useState(false);
+  const qrRef = useRef<HTMLDivElement>(null);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -229,7 +238,7 @@ function DashboardPage() {
         {/* Records Tab */}
         {activeTab === "records" && (
           <div>
-            <div className="mb-6 flex gap-4">
+            <div className="mb-6 flex flex-wrap gap-3">
               {abhaStatus?.isLinked && (
                 <button
                   onClick={async () => {
@@ -237,8 +246,6 @@ function DashboardPage() {
                       setIsLoading(true);
                       const result = await apiClient.abha.getHealthRecords();
                       if (result.records && result.records.length > 0) {
-                        // In a real app, you'd save these to the database
-                        // For now, we'll just display them
                         setRecords(result.records);
                       }
                     } catch (error) {
@@ -258,6 +265,13 @@ function DashboardPage() {
               >
                 + Upload Record
               </a>
+              <button
+                onClick={() => setShowQrModal(true)}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-lg hover:from-violet-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+              >
+                <QrCode size={18} />
+                Generate QR
+              </button>
             </div>
             {isLoading ? (
               <div className="text-center py-12">
@@ -366,6 +380,168 @@ function DashboardPage() {
           </div>
         )}
       </main>
+
+      {/* ── QR Code Modal ─────────────────────────────────────────────── */}
+      {showQrModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowQrModal(false)}
+          />
+
+          {/* Modal */}
+          <div className="relative bg-card border border-border rounded-2xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in-95">
+            {/* Close button */}
+            <button
+              onClick={() => setShowQrModal(false)}
+              className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-muted transition-colors"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="text-center">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <QrCode className="text-white" size={28} />
+              </div>
+              <h2 className="text-xl font-bold text-foreground mb-1">Share Medical History</h2>
+              <p className="text-sm text-muted-foreground mb-6">
+                Generate a QR code so that anyone who scans it can view your medical timeline.
+              </p>
+            </div>
+
+            {!qrData ? (
+              /* Step 1: Configure & Generate */
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Link expiry
+                </label>
+                <div className="grid grid-cols-4 gap-2 mb-6">
+                  {[1, 6, 24, 72].map((h) => (
+                    <button
+                      key={h}
+                      onClick={() => setQrExpiry(h)}
+                      className={`py-2 rounded-lg text-sm font-medium transition-colors ${
+                        qrExpiry === h
+                          ? "bg-primary text-primary-foreground shadow-md"
+                          : "bg-muted text-muted-foreground hover:bg-muted/80"
+                      }`}
+                    >
+                      {h < 24 ? `${h}h` : `${h / 24}d`}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  disabled={qrLoading}
+                  onClick={async () => {
+                    try {
+                      setQrLoading(true);
+                      const result = await apiClient.share.generate({ expiryHours: qrExpiry });
+                      setQrData(result.data);
+                    } catch (error) {
+                      console.error('QR generation error:', error);
+                    } finally {
+                      setQrLoading(false);
+                    }
+                  }}
+                  className="w-full py-3 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-semibold hover:from-violet-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {qrLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
+                      Generating…
+                    </>
+                  ) : (
+                    <>
+                      <QrCode size={18} />
+                      Generate QR Code
+                    </>
+                  )}
+                </button>
+              </div>
+            ) : (
+              /* Step 2: Show QR Code */
+              <div>
+                <div
+                  ref={qrRef}
+                  className="bg-white rounded-xl p-6 flex flex-col items-center mb-4 shadow-inner"
+                >
+                  <QRCodeSVG
+                    value={qrData.shareUrl}
+                    size={200}
+                    level="H"
+                    includeMargin
+                    imageSettings={{
+                      src: "",
+                      height: 0,
+                      width: 0,
+                      excavate: false,
+                    }}
+                  />
+                  <p className="text-xs text-slate-500 mt-3 text-center break-all max-w-[250px]">
+                    {qrData.shareUrl}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground mb-4">
+                  <Clock size={12} />
+                  Expires: {new Date(qrData.expiresAt).toLocaleString()}
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(qrData.shareUrl);
+                      setCopied(true);
+                      setTimeout(() => setCopied(false), 2000);
+                    }}
+                    className="flex items-center justify-center gap-2 py-2.5 rounded-lg border border-border hover:bg-muted transition-colors text-sm font-medium"
+                  >
+                    {copied ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                    {copied ? "Copied!" : "Copy Link"}
+                  </button>
+                  <button
+                    onClick={() => {
+                      const svg = qrRef.current?.querySelector("svg");
+                      if (!svg) return;
+                      const serializer = new XMLSerializer();
+                      const svgString = serializer.serializeToString(svg);
+                      const canvas = document.createElement("canvas");
+                      canvas.width = 300;
+                      canvas.height = 300;
+                      const ctx = canvas.getContext("2d");
+                      const img = new Image();
+                      img.onload = () => {
+                        ctx?.drawImage(img, 0, 0, 300, 300);
+                        const link = document.createElement("a");
+                        link.download = "healthconnect-qr.png";
+                        link.href = canvas.toDataURL("image/png");
+                        link.click();
+                      };
+                      img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgString)));
+                    }}
+                    className="flex items-center justify-center gap-2 py-2.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
+                  >
+                    <Download size={16} />
+                    Download
+                  </button>
+                </div>
+
+                <button
+                  onClick={() => {
+                    setQrData(null);
+                    setCopied(false);
+                  }}
+                  className="w-full mt-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Generate a new one
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

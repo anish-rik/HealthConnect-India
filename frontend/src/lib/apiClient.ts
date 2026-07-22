@@ -196,6 +196,21 @@ class ApiClient {
     getHealthRecords: () =>
       this.request('/abha/health-records', { method: 'GET' }),
   };
+
+  // Share / QR endpoints
+  share = {
+    generate: (data: { expiryHours?: number; label?: string } = {}) =>
+      this.request('/share/generate', {
+        method: 'POST',
+        body: JSON.stringify(data),
+      }),
+    listTokens: () =>
+      this.request('/share/my-tokens', { method: 'GET' }),
+    revoke: (tokenId: string) =>
+      this.request(`/share/${tokenId}`, { method: 'DELETE' }),
+    getPublicTimeline: (token: string) =>
+      this.request(`/share/public/${token}`, { method: 'GET' }),
+  };
 }
 
 export const apiClient = new ApiClient();

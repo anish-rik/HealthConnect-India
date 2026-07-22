@@ -17,6 +17,7 @@ const authRoutes = require('./routes/authRoutes');
 const recordsRoutes = require('./routes/recordsRoutes');
 const appointmentsRoutes = require('./routes/appointmentsRoutes');
 const abhaRoutes = require('./routes/abhaRoutes');
+const shareRoutes = require('./routes/shareRoutes');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -84,12 +85,21 @@ app.get('/health', (req, res) => {
   });
 });
 
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to HealthConnect India API',
+    status: 'Running',
+    docs: '/health'
+  });
+});
+
 // ── API Routes ───────────────────────────────────────────────────────────────
 
 app.use('/api/auth', authRoutes);
 app.use('/api/records', recordsRoutes);
 app.use('/api/appointments', appointmentsRoutes);
 app.use('/api/abha', abhaRoutes);
+app.use('/api/share', shareRoutes);
 
 // ── WebSocket ────────────────────────────────────────────────────────────────
 

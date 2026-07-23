@@ -138,6 +138,34 @@ const validateAbhaNumber = [
   handleValidationErrors,
 ];
 
+// ── OTP Validators ───────────────────────────────────────────────────────────
+
+const validateSendOtp = [
+  body('phone')
+    .trim()
+    .notEmpty()
+    .withMessage('Phone number is required')
+    .matches(/^\d{10}$/)
+    .withMessage('Phone must be a 10-digit Indian number'),
+  handleValidationErrors,
+];
+
+const validateVerifyOtp = [
+  body('phone')
+    .trim()
+    .notEmpty()
+    .withMessage('Phone number is required')
+    .matches(/^\d{10}$/)
+    .withMessage('Phone must be a 10-digit Indian number'),
+  body('otp')
+    .trim()
+    .notEmpty()
+    .withMessage('OTP is required')
+    .matches(/^\d{6}$/)
+    .withMessage('OTP must be exactly 6 digits'),
+  handleValidationErrors,
+];
+
 // ── Param Validators ────────────────────────────────────────────────────────
 
 const validateMongoId = [
@@ -150,6 +178,8 @@ module.exports = {
   validateRegister,
   validateLogin,
   validateAbhaLogin,
+  validateSendOtp,
+  validateVerifyOtp,
   validateCreateRecord,
   validateCreateAppointment,
   validateAbhaNumber,

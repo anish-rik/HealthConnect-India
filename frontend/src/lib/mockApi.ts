@@ -64,6 +64,50 @@ export async function handleMockRequest(endpoint: string, options: any = {}, cur
     };
   }
 
+  // 1b. AUTH: Send OTP (mock — always succeeds, returns devOtp so UI can pre-fill)
+  if (endpoint === '/auth/send-otp') {
+    const phone = (body.phone || '').replace(/\D/g, '').slice(-10);
+    const mockOtp = '123456'; // Fixed OTP for demo mode
+    // Store in localStorage so verify-otp can check it
+    localStorage.setItem(`mock_otp_${phone}`, mockOtp);
+    return {
+      success: true,
+      message: 'If this number is registered, an OTP has been sent',
+      data: { expiresIn: 600, devOtp: mockOtp },
+    };
+  }
+
+  // 1c. AUTH: Verify OTP (mock)
+  if (endpoint === '/auth/verify-otp') {
+    const phone = (body.phone || '').replace(/\D/g, '').slice(-10);
+    const storedOtp = localStorage.getItem(`mock_otp_${phone}`);
+
+    if (!storedOtp || body.otp !== storedOtp) {
+      throw new Error('Incorrect OTP. Please try again.');
+    }
+
+    localStorage.removeItem(`mock_otp_${phone}`);
+
+    // Find demo user by phone
+    const found = DEMO_PATIENTS.find((p) => {
+      const cleanPhone = p.phone.replace(/\D/g, '').slice(-10);
+      return cleanPhone === phone || cleanPhone.endsWith(phone) || phone.endsWith(cleanPhone);
+    });
+    const user = found || DEFAULT_USER;
+    const token = `mock-token-${user.id}`;
+    localStorage.setItem('authToken', token);
+    localStorage.setItem('mock_user_id', user.id);
+
+    return {
+      success: true,
+      message: 'Login successful (Demo Mode)',
+      data: {
+        token,
+        user: { id: user.id, email: user.email, name: user.name, role: 'user' as const, phone: user.phone },
+      },
+    };
+  }
+
   // Determine active mock user from token or localStorage
   let activeUserId = localStorage.getItem('mock_user_id') || 'P001';
   if (currentToken && currentToken.startsWith('mock-token-')) {

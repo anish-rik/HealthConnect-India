@@ -16,9 +16,14 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   isLoading: boolean;
+  isAuthenticated: boolean;
   register: (data: any) => Promise<void>;
   login: (phone: string, password: string) => Promise<void>;
   loginAbha: (abhaId: string, password: string) => Promise<void>;
+  /** Step 1 – request OTP to be sent to phone */
+  sendLoginOtp: (phone: string) => Promise<{ devOtp?: string }>;
+  /** Step 2 – verify OTP and sign in */
+  loginPhoneOtp: (phone: string, otp: string) => Promise<void>;
   logout: () => void;
   updateProfile: (data: any) => Promise<void>;
 }
@@ -80,6 +85,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(newUser);
   };
 
+  /** Step 1: ask server to SMS an OTP to the given phone */
+  const sendLoginOtp = async (phone: string): Promise<{ devOtp?: string }> => {
+    const res = await apiClient.auth.sendOtp(phone);
+    // res.data.devOtp is only present when no SMS provider is configured (dev mode)
+    return { devOtp: res.data?.devOtp };
+  };
+
+  /** Step 2: verify the OTP and log the user in */
+  const loginPhoneOtp = async (phone: string, otp: string) => {
+    const res = await apiClient.auth.verifyOtp(phone, otp);
+    const { token: newToken, user: newUser } = res.data;
+
+    apiClient.setToken(newToken);
+    setToken(newToken);
+    setUser(newUser);
+  };
+
   const logout = () => {
     apiClient.removeToken();
     setToken(null);
@@ -102,6 +124,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         register,
         login,
         loginAbha,
+        sendLoginOtp,
+        loginPhoneOtp,
         logout,
         updateProfile,
       }}

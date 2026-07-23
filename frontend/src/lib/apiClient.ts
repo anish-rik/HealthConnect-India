@@ -113,6 +113,25 @@ class ApiClient {
         method: "POST",
         body: JSON.stringify(data),
       }),
+    /**
+     * Step 1 of OTP login: request OTP to be sent to phone.
+     * @param phone 10-digit Indian phone number
+     */
+    sendOtp: (phone: string) =>
+      this.request("/auth/send-otp", {
+        method: "POST",
+        body: JSON.stringify({ phone }),
+      }),
+    /**
+     * Step 2 of OTP login: verify OTP and receive JWT.
+     * @param phone 10-digit Indian phone number
+     * @param otp   6-digit OTP received via SMS
+     */
+    verifyOtp: (phone: string, otp: string) =>
+      this.request("/auth/verify-otp", {
+        method: "POST",
+        body: JSON.stringify({ phone, otp }),
+      }),
     getProfile: () => this.request("/auth/profile", { method: "GET" }),
     updateProfile: (data) =>
       this.request("/auth/profile", {

@@ -1,5 +1,6 @@
 const User = require('../models/User');
-const { generateToken, sendErrorResponse, sendSuccessResponse, validateEmail, validatePhoneNumber } = require('../utils/helpers');
+const { generateToken, sendErrorResponse, sendSuccessResponse, validateEmail, validatePhoneNumber, storeOtp, verifyOtp } = require('../utils/helpers');
+const { generateOtp, sendOtp } = require('../services/smsService');
 
 const register = async (req, res) => {
   try {
@@ -164,4 +165,90 @@ const loginAbha = async (req, res) => {
   }
 };
 
-module.exports = { register, login, loginAbha, getProfile, updateProfile };
+/**
+ * POST /auth/send-otp
+ * Sends a 6-digit OTP to the given phone number.
+ * The phone must belong to an existing user (prevents OTP enumeration on new numbers).
+ *
+ * Body: { phone: "9876543210" }
+ */
+const sendOtpController = async (req, res) => {
+  try {
+    const { phone } = req.body;
+
+    if (!phone) {
+      return sendErrorResponse(res, 400, 'Phone number is required');
+    }
+
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10); // last 10 digits
+
+    if (!/^\d{10}$/.test(cleanPhone)) {
+      return sendErrorResponse(res, 400, 'Phone must be a valid 10-digit Indian number');
+    }
+
+    // Check user exists — return identical message either way to prevent enumeration
+    const user = await User.findOne({ phone: cleanPhone });
+
+    const otp = generateOtp();
+    storeOtp(cleanPhone, otp);
+
+    // Only send SMS if user actually exists
+    const responsePayload = { expiresIn: 600 }; // 10 min TTL in seconds
+    if (user) {
+      const result = await sendOtp(cleanPhone, otp);
+      // In dev / console mode, expose OTP in response body so devs can test without SMS credits
+      if (result.devMode) {
+        responsePayload.devOtp = otp; // ⚠️ only present when no SMS provider is configured
+      }
+    }
+
+    return sendSuccessResponse(res, 200, 'If this number is registered, an OTP has been sent', responsePayload);
+  } catch (error) {
+    console.error('Send OTP error:', error);
+    return sendErrorResponse(res, 500, 'Failed to send OTP');
+  }
+};
+
+/**
+ * POST /auth/verify-otp
+ * Verifies the OTP and issues a JWT if correct.
+ *
+ * Body: { phone: "9876543210", otp: "123456" }
+ */
+const verifyOtpLogin = async (req, res) => {
+  try {
+    const { phone, otp } = req.body;
+
+    if (!phone || !otp) {
+      return sendErrorResponse(res, 400, 'Phone number and OTP are required');
+    }
+
+    const cleanPhone = phone.replace(/\D/g, '').slice(-10);
+
+    const result = verifyOtp(cleanPhone, String(otp));
+    if (!result.valid) {
+      return sendErrorResponse(res, 401, result.reason);
+    }
+
+    // OTP valid — fetch user and issue JWT
+    const user = await User.findOne({ phone: cleanPhone });
+    if (!user) {
+      return sendErrorResponse(res, 401, 'User not found');
+    }
+
+    user.lastLogin = new Date();
+    await user.save();
+
+    const token = generateToken(user);
+
+    return sendSuccessResponse(res, 200, 'Login successful', {
+      user: { id: user._id, email: user.email, name: user.name, role: user.role, phone: user.phone },
+      token,
+    });
+  } catch (error) {
+    console.error('Verify OTP error:', error);
+    return sendErrorResponse(res, 500, 'OTP verification failed');
+  }
+};
+
+module.exports = { register, login, loginAbha, getProfile, updateProfile, sendOtpController, verifyOtpLogin };

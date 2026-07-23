@@ -114,13 +114,13 @@ class ApiClient {
         body: JSON.stringify(data),
       }),
     /**
-     * Step 1 of OTP login: request OTP to be sent to phone.
-     * @param phone 10-digit Indian phone number
+     * Step 1 of OTP login: request OTP to be sent to the registered mobile.
+     * @param identifier 10-digit phone number OR 12-14 digit ABHA ID
      */
-    sendOtp: (phone: string) =>
+    sendOtp: (identifier: string) =>
       this.request("/auth/send-otp", {
         method: "POST",
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ identifier }),
       }),
     /**
      * Step 2 of OTP login: verify OTP and receive JWT.

@@ -64,16 +64,31 @@ export async function handleMockRequest(endpoint: string, options: any = {}, cur
     };
   }
 
-  // 1b. AUTH: Send OTP (mock — always succeeds, returns devOtp so UI can pre-fill)
+  // 1b. AUTH: Send OTP (mock — accepts phone or ABHA, always succeeds)
   if (endpoint === '/auth/send-otp') {
-    const phone = (body.phone || '').replace(/\D/g, '').slice(-10);
-    const mockOtp = '123456'; // Fixed OTP for demo mode
-    // Store in localStorage so verify-otp can check it
-    localStorage.setItem(`mock_otp_${phone}`, mockOtp);
+    const identifier = (body.identifier || '').replace(/\D/g, '');
+
+    // Find demo user by phone or ABHA
+    const found = DEMO_PATIENTS.find((p) => {
+      const cleanPhone = p.phone.replace(/\D/g, '').slice(-10);
+      const cleanAbha = p.abhaId.replace(/\D/g, '');
+      return cleanPhone === identifier.slice(-10) || cleanAbha === identifier;
+    });
+
+    const user = found || DEFAULT_USER;
+    const cleanPhone = user.phone.replace(/\D/g, '').slice(-10);
+    const mockOtp = '123456';
+    localStorage.setItem(`mock_otp_${cleanPhone}`, mockOtp);
+
     return {
       success: true,
       message: 'If this number is registered, an OTP has been sent',
-      data: { expiresIn: 600, devOtp: mockOtp },
+      data: {
+        expiresIn: 600,
+        phone: cleanPhone,
+        maskedPhone: `XXXXXX${cleanPhone.slice(-4)}`,
+        devOtp: mockOtp,
+      },
     };
   }
 

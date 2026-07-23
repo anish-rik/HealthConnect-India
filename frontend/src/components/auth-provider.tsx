@@ -21,7 +21,7 @@ interface AuthContextType {
   login: (phone: string, password: string) => Promise<void>;
   loginAbha: (abhaId: string, password: string) => Promise<void>;
   /** Step 1 – request OTP to be sent to phone */
-  sendLoginOtp: (phone: string) => Promise<{ devOtp?: string }>;
+  sendLoginOtp: (identifier: string) => Promise<{ phone?: string; maskedPhone?: string; devOtp?: string }>;
   /** Step 2 – verify OTP and sign in */
   loginPhoneOtp: (phone: string, otp: string) => Promise<void>;
   logout: () => void;
@@ -85,11 +85,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(newUser);
   };
 
-  /** Step 1: ask server to SMS an OTP to the given phone */
-  const sendLoginOtp = async (phone: string): Promise<{ devOtp?: string }> => {
-    const res = await apiClient.auth.sendOtp(phone);
-    // res.data.devOtp is only present when no SMS provider is configured (dev mode)
-    return { devOtp: res.data?.devOtp };
+  /** Step 1: ask server to SMS an OTP to the registered phone for this identifier */
+  const sendLoginOtp = async (identifier: string): Promise<{ phone?: string; maskedPhone?: string; devOtp?: string }> => {
+    const res = await apiClient.auth.sendOtp(identifier);
+    return {
+      phone: res.data?.phone,
+      maskedPhone: res.data?.maskedPhone,
+      devOtp: res.data?.devOtp,
+    };
   };
 
   /** Step 2: verify the OTP and log the user in */

@@ -141,12 +141,12 @@ const validateAbhaNumber = [
 // ── OTP Validators ───────────────────────────────────────────────────────────
 
 const validateSendOtp = [
-  body('phone')
+  body('identifier')
     .trim()
     .notEmpty()
-    .withMessage('Phone number is required')
-    .matches(/^\d{10}$/)
-    .withMessage('Phone must be a 10-digit Indian number'),
+    .withMessage('Phone number or ABHA ID is required')
+    .matches(/^\d{10}$|^\d{12,14}$/)
+    .withMessage('Enter a valid 10-digit phone number or 12-14 digit ABHA ID'),
   handleValidationErrors,
 ];
 

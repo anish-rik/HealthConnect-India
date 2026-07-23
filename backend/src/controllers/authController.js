@@ -167,40 +167,53 @@ const loginAbha = async (req, res) => {
 
 /**
  * POST /auth/send-otp
- * Sends a 6-digit OTP to the given phone number.
- * The phone must belong to an existing user (prevents OTP enumeration on new numbers).
+ * Accepts either a 10-digit phone number OR a 12-14 digit ABHA number.
+ * Looks up the registered mobile, sends a 6-digit OTP to it.
  *
- * Body: { phone: "9876543210" }
+ * Body: { identifier: "9876543210" }  OR  { identifier: "412356789012" }
+ * Response includes `phone` (masked) so the UI can show "OTP sent to ******3210".
  */
 const sendOtpController = async (req, res) => {
   try {
-    const { phone } = req.body;
+    const { identifier } = req.body;
 
-    if (!phone) {
-      return sendErrorResponse(res, 400, 'Phone number is required');
+    if (!identifier) {
+      return sendErrorResponse(res, 400, 'Phone number or ABHA ID is required');
     }
 
-    const cleanPhone = phone.replace(/\D/g, '').slice(-10); // last 10 digits
+    const digits = identifier.replace(/\D/g, '');
 
-    if (!/^\d{10}$/.test(cleanPhone)) {
-      return sendErrorResponse(res, 400, 'Phone must be a valid 10-digit Indian number');
+    let user = null;
+
+    if (digits.length === 10) {
+      // Treat as phone number
+      user = await User.findOne({ phone: digits });
+    } else if (digits.length >= 12 && digits.length <= 14) {
+      // Treat as ABHA ID (12 or 14 digits)
+      user = await User.findOne({ abhaId: digits });
+    } else {
+      return sendErrorResponse(res, 400, 'Enter a valid 10-digit phone number or 12-14 digit ABHA ID');
     }
 
-    // Check user exists — return identical message either way to prevent enumeration
-    const user = await User.findOne({ phone: cleanPhone });
+    const responsePayload = { expiresIn: 600 };
 
-    const otp = generateOtp();
-    storeOtp(cleanPhone, otp);
-
-    // Only send SMS if user actually exists
-    const responsePayload = { expiresIn: 600 }; // 10 min TTL in seconds
     if (user) {
+      const cleanPhone = user.phone.replace(/\D/g, '').slice(-10);
+      const otp = generateOtp();
+      storeOtp(cleanPhone, otp);
+
       const result = await sendOtp(cleanPhone, otp);
-      // In dev / console mode, expose OTP in response body so devs can test without SMS credits
+
+      // Return masked phone so UI can show "OTP sent to ******3210"
+      responsePayload.maskedPhone = `XXXXXX${cleanPhone.slice(-4)}`;
+      responsePayload.phone = cleanPhone; // needed by frontend to call verify-otp
+
       if (result.devMode) {
-        responsePayload.devOtp = otp; // ⚠️ only present when no SMS provider is configured
+        responsePayload.devOtp = otp; // ⚠️ only when no SMS provider configured
       }
     }
+    // No user found — still return 200 with same message to prevent enumeration
+    // but don't include phone/maskedPhone so the UI can gently indicate no match
 
     return sendSuccessResponse(res, 200, 'If this number is registered, an OTP has been sent', responsePayload);
   } catch (error) {
